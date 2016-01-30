@@ -1,0 +1,20 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("Range-hud_exec.c"
+ (filename . "~/scr/37481/dgcs/201.15.7/DGCS_201.15.7/src/hud_exec.c")
+ (front-context-string . "    updateIff(HU")
+ (rear-context-string . "\n  if (new_hud)\n")
+ (position . 66710))
+("hud-904.6.0"
+ (filename . "/home/MQ1/local/src/DGCS/904.6.0/DGCS_904.6.0/src/dgcs/hud_exec.c")
+ (front-context-string . " if ((FT_TO_NM(g")
+ (rear-context-string . "s.hud_gs_dev;\n\n ")
+ (position . 56866))
+("org-capture-last-stored"
+ (filename . "~/org/pim/organizer.org.gpg")
+ (front-context-string . "**** foo\nEntered")
+ (rear-context-string . "4-12-16 Tuesday\n")
+ (position . 45067))
+)
