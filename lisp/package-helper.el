@@ -36,8 +36,9 @@
 
 (defun packagep (name)
   "Return t if NAME is an available package."
-  (unless package-archive-contents
-    (package-refresh-contents))
+;; Do not automatically update RSF 1/31/16
+;;  (unless package-archive-contents
+;;    (package-refresh-contents))
   (not (null (assoc name package-archive-contents))))
 
 (defun package-real-name (package)

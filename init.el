@@ -11,6 +11,7 @@
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
+;;(message (concat "0 Org version is " (org-version)))
 (package-initialize)
 
 (when (getenv "ORG_HOME")
@@ -18,6 +19,7 @@
     (when (file-directory-p org-lisp-dir)
       (add-to-list 'load-path org-lisp-dir)
       (require 'org))))
+(message (concat "1 Org version is " (org-version)))
 
 ;; load the starter kit from the `after-init-hook' so all packages are loaded
 (add-hook 'after-init-hook
@@ -36,3 +38,6 @@
 
 ;;; init.el ends here
 (provide 'init) ; make (require 'init) happy
+
+;; For debugging
+;; (setq config-dir (expand-file-name "~/.emacs.d"))
