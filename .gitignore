@@ -19,3 +19,4 @@ org-clock-save.el
 url/
 .mc-lists.el
 *.elc
+helm-adaptive-history
