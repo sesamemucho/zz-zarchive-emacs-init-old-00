@@ -12,6 +12,15 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 ;;(message (concat "0 Org version is " (org-version)))
+;; Try to unload built-in org, so I can update with current version.
+(mapc
+ (lambda (x)
+   (let ((feat (cdr (assoc 'provide (cdr x)))))
+     (and (string-match "^org\\|^ox\\\|^ob" (symbol-name feat))
+	  (featurep feat)
+	  (unload-feature feat t))))
+ load-history)
+
 (package-initialize)
 
 (when (getenv "ORG_HOME")
