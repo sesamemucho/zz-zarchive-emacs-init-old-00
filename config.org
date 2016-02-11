@@ -656,7 +656,9 @@ contains an up to date list of the currently supported languages.
        (plantuml . t)
        (python . t)
        (dot . t)
-       (shell . t)))
+       (shell . t)
+       (screen . t)
+       ))
   (require 'ob-dot)
 #+end_src
 
