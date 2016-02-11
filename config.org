@@ -551,7 +551,6 @@ globally for later insertion into an Org-mode buffer.  See
   ;; A default name to give context to some of the elisp farther down.
   ;; It generally gets changed in a system or user file.
   (setq ssmm-org-main-file (expand-file-name "~/org/organizer.org"))
-  (setq ssmm-org-main-buffer (file-name-nondirectory ssmm-org-main-file))
 
     (defun ssmm-org-make-checkbox ()
       "Make this line into a checkbox"
@@ -604,7 +603,7 @@ globally for later insertion into an Org-mode buffer.  See
    heading named 'Projects', in `ssmm-org-main-file'.
    "
     (interactive)
-    (with-current-buffer ssmm-org-main-buffer
+    (with-current-buffer (file-name-nondirectory ssmm-org-main-file)
       (org-element-map (org-element-parse-buffer) 'headline
         (lambda (headline)
           (let* ((parent (org-element-property :parent headline))
@@ -940,7 +939,7 @@ file using the `org-babel-lob-ingest' function.
           '((name . "Project topics")
           (candidates . ssmm-get-projects)
           (action . (lambda (candidate)
-                    (switch-to-buffer ssmm-org-main-buffer)
+                    (switch-to-buffer (file-name-nondirectory ssmm-org-main-file))
                     (goto-char (point-min))
                     (search-forward candidate)))))
 
@@ -1157,6 +1156,9 @@ Try using this instead of macros.
 This is the last section to be run during startup.
 
 #+begin_src emacs-lisp
+  
+  (server-start)
+
   (if (getenv "RATPOISON")
       (progn
        ;; No bindings that have C-t
