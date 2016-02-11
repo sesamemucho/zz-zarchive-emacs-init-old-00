@@ -38,7 +38,6 @@ This
 ;(setq debug-on-error t)
   ;;(set-default-font "-unknown-Inconsolata-normal-normal-normal-*-12-*-*-*-m-0-iso10646-1")
     (add-to-list 'load-path "~/.emacs.d/lisp")
-    (add-to-list 'load-path "~/.emacs.d/etc")
     
     ;;; Turn off the annoying crap immediately
     (menu-bar-mode -1)
@@ -92,7 +91,7 @@ This code should be executed before any customization files are loaded.
 - Compile bare elisp files
 #+begin_src emacs-lisp
 (byte-recompile-directory "~/.emacs.d/lisp/" 0)
-(byte-recompile-directory "~/.emacs.d/etc/" 0)
+;;(byte-recompile-directory "~/.emacs.d/etc/" 0)
 #+end_src
 
 *** Settings from M-x customize
@@ -549,30 +548,36 @@ globally for later insertion into an Org-mode buffer.  See
   ;; Automatically tracks when TODO items are DONEd.
   (setq org-log-done 'time)
 
-  (defun ssmm-org-make-checkbox ()
-    "Make this line into a checkbox"
-    (interactive)
-    (beginning-of-line)
-    (insert " - [ ] "))
+  ;; A default name to give context to some of the elisp farther down.
+  ;; It generally gets changed in a system or user file.
+  (setq ssmm-org-main-file (expand-file-name "~/org/organizer.org"))
+  (setq ssmm-org-main-buffer (file-name-nondirectory ssmm-org-main-file))
 
-  (defun ssmm-org-auto-fill ()
-    (if (string-match-p "^[0-9]+\.org" (buffer-name)) (auto-fill-mode 1))
-    )
+    (defun ssmm-org-make-checkbox ()
+      "Make this line into a checkbox"
+      (interactive)
+      (beginning-of-line)
+      (insert " - [ ] "))
 
-  (defun my-org-mode-hook ()
-    (local-set-key (kbd "C-c C-<f9>") 'ssmm-org-make-checkbox)
-    (local-set-key (kbd "C-<f9>") 'org-metaright)
-    (ssmm-org-auto-fill)
-    )
+    (defun ssmm-org-auto-fill ()
+      (if (string-match-p "^[0-9]+\.org" (buffer-name)) (auto-fill-mode 1))
+      )
 
-  (add-hook 'org-mode-hook 'my-org-mode-hook t)
-  ;(setq prelude-org-mode-hook nil)
+    (defun my-org-mode-hook ()
+      (local-set-key (kbd "C-c C-<f9>") 'ssmm-org-make-checkbox)
+      (local-set-key (kbd "C-<f9>") 'org-metaright)
+      (ssmm-org-auto-fill)
+      )
 
-  (defun ssmm/org-open-other-frame ()
-    "Jump to bookmark in another frame. See `bookmark-jump' for more."
-    (interactive)
-    (let ((org-link-frame-setup (acons 'file 'find-file-other-frame org-link-frame-setup)))
-      (org-open-at-point)))
+    (add-hook 'org-mode-hook 'my-org-mode-hook t)
+    ;(setq prelude-org-mode-hook nil)
+
+    (defun ssmm/org-open-other-frame ()
+      "Jump to bookmark in another frame. See `bookmark-jump' for more."
+      (interactive)
+      (let ((org-link-frame-setup (acons 'file 'find-file-other-frame org-link-frame-setup)))
+        (org-open-at-point)))
+
 #+end_src
 
 **** Org agenda
@@ -580,10 +585,39 @@ globally for later insertion into an Org-mode buffer.  See
 **** Capturing
 
 #+begin_src emacs-lisp
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cb" 'org-iswitchb)
+    (setq org-capture-templates '(("t" "Todo" entry (file+datetree ssmm-org-main-file)
+                                   "* TODO %?%t\nEntered on %u\n  %i\n")
+                                  ("j" "Journal" entry (file+datetree ssmm-org-main-file)
+                                   "* %?\nEntered on %T\n  %i\n" :clock-keep t)
+                                  ("p" "New project entry" entry (file+olp ssmm-org-main-file "heading two" "Projects")
+                                   "* %?\nEntered on %T\n" )
+                                  ))
+
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-cc" 'org-capture)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cb" 'org-iswitchb)
+
+  (defun ssmm-get-projects ()
+  "Get a list of current projects.
+   This will be a list of the 2nd-level headings under a 1st-level
+   heading named 'Projects', in `ssmm-org-main-file'.
+   "
+    (interactive)
+    (with-current-buffer ssmm-org-main-buffer
+      (org-element-map (org-element-parse-buffer) 'headline
+        (lambda (headline)
+          (let* ((parent (org-element-property :parent headline))
+                 (foo1 (org-element-property :title parent)))
+                                          ;(and foo1 (message (format "Got %s" (substring-no-properties (car foo1)))))
+            (and (eq (org-element-type parent) 'headline)
+                 (string= (org-element-property :raw-value parent) "Projects")
+                 (= (org-element-property :level parent) 1)
+                 (org-element-property :raw-value headline)
+                 )))))
+    )
+
+
 #+end_src
 
 *** Org-Mode Hook -- Keybindings
@@ -900,6 +934,19 @@ file using the `org-babel-lob-ingest' function.
           helm-buffers-fuzzy-matching t
           helm-recentf-fuzzy-match    t
           )
+
+  ;; Go to my org project headings
+    (setq programs-helm-source
+          '((name . "Project topics")
+          (candidates . ssmm-get-projects)
+          (action . (lambda (candidate)
+                    (switch-to-buffer ssmm-org-main-buffer)
+                    (goto-char (point-min))
+                    (search-forward candidate)))))
+
+
+    (global-set-key (kbd "C-x c <f8>") (lambda () (interactive) (helm :sources '(programs-helm-source))))
+
 
     (helm-mode 1)
     )
