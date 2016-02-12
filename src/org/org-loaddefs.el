@@ -14,7 +14,7 @@
 ;;;;;;  org-babel-execute-src-block org-babel-pop-to-session-maybe
 ;;;;;;  org-babel-load-in-session-maybe org-babel-expand-src-block-maybe
 ;;;;;;  org-babel-view-src-block-info org-babel-execute-maybe org-babel-execute-safely-maybe)
-;;;;;;  "ob-core" "ob-core.el" "3c76bd5c56163ade935c30decadda707")
+;;;;;;  "ob-core" "ob-core.el" "9eca704a7eb1a718c5dd4e84dc1d9f36")
 ;;; Generated autoloads from ob-core.el
 
 (autoload 'org-babel-execute-safely-maybe "ob-core" "\
@@ -78,7 +78,7 @@ Expand the current source code block.
 Expand according to the source code block's header
 arguments and pop open the results in a preview buffer.
 
-\(fn &optional ARG INFO PARAMS)" t nil)
+\(fn &optional _ARG INFO PARAMS)" t nil)
 
 (autoload 'org-babel-check-src-block "ob-core" "\
 Check for misspelled header arguments in the current code block.
@@ -96,7 +96,7 @@ Evaluate the header arguments for the source block before
 entering the session.  After loading the body this pops open the
 session.
 
-\(fn &optional ARG INFO)" t nil)
+\(fn &optional _ARG INFO)" t nil)
 
 (autoload 'org-babel-initiate-session "ob-core" "\
 Initiate session for current code block.
@@ -117,7 +117,7 @@ with a prefix argument then this is passed on to
 (autoload 'org-babel-switch-to-session-with-code "ob-core" "\
 Switch to code buffer and display session.
 
-\(fn &optional ARG INFO)" t nil)
+\(fn &optional ARG _INFO)" t nil)
 
 (autoload 'org-babel-do-in-edit-buffer "ob-core" "\
 Evaluate BODY in edit buffer if there is a code block at point.
@@ -264,7 +264,7 @@ Return a Library of Babel function call as a string.
 ;;;***
 
 ;;;### (autoloads (org-babel-tangle org-babel-tangle-file) "ob-tangle"
-;;;;;;  "ob-tangle.el" "bbdbf9322d0ab7e977944af2e50bfa5f")
+;;;;;;  "ob-tangle.el" "3ba1e4bcd6d4b3c9293130baa1e76017")
 ;;; Generated autoloads from ob-tangle.el
 
 (autoload 'org-babel-tangle-file "ob-tangle" "\
@@ -700,7 +700,7 @@ Set `org-capture-templates' to be similar to `org-remember-templates'.
 ;;;;;;  org-clock-remove-overlays org-clock-display org-clock-sum
 ;;;;;;  org-clock-goto org-clock-cancel org-clock-out org-clock-in-last
 ;;;;;;  org-clock-in org-resolve-clocks) "org-clock" "org-clock.el"
-;;;;;;  "77e9d41bfa70c31eb1e4ffa942e8d780")
+;;;;;;  "133b6d837d46606bf3b4f1753035bca8")
 ;;; Generated autoloads from org-clock.el
 
 (autoload 'org-resolve-clocks "org-clock" "\
@@ -897,7 +897,7 @@ Turn on or update column view in the agenda.
 ;;;***
 
 ;;;### (autoloads (org-check-version) "org-compat" "org-compat.el"
-;;;;;;  (22161 62906))
+;;;;;;  (22187 570))
 ;;; Generated autoloads from org-compat.el
 
 (autoload 'org-check-version "org-compat" "\
@@ -923,7 +923,7 @@ tree can be found.
 
 ;;;### (autoloads (org-element-context org-element-at-point org-element-cache-refresh
 ;;;;;;  org-element-cache-reset org-element-interpret-data org-element-update-syntax)
-;;;;;;  "org-element" "org-element.el" "306ed409f115d591fc33d23848b5e693")
+;;;;;;  "org-element" "org-element.el" "246108bce2e48b3e3f74b79b75e1fc25")
 ;;; Generated autoloads from org-element.el
 
 (autoload 'org-element-update-syntax "org-element" "\
@@ -1260,7 +1260,7 @@ line directly before or after the table.
 ;;;;;;  org-table-begin org-table-align org-table-export org-table-import
 ;;;;;;  org-table-convert-region org-table-create org-table-create-or-convert-from-region
 ;;;;;;  org-table-create-with-table\.el) "org-table" "org-table.el"
-;;;;;;  "9eb480271b60d96743834b9132a5ab0f")
+;;;;;;  "e9359ea5b998c77257caa9b21313bf8a")
 ;;; Generated autoloads from org-table.el
 
 (autoload 'org-table-create-with-table\.el "org-table" "\
@@ -2005,7 +2005,7 @@ using three `C-u' prefix arguments.
 ;;;***
 
 ;;;### (autoloads (org-git-version org-release) "org-version" "org-version.el"
-;;;;;;  (22181 47591))
+;;;;;;  (22190 62565))
 ;;; Generated autoloads from org-version.el
 
 (autoload 'org-release "org-version" "\
@@ -2031,7 +2031,7 @@ The location of ODT styles.")
 ;;;;;;  org-run-like-in-org-mode turn-on-orgstruct++ turn-on-orgstruct
 ;;;;;;  orgstruct-mode org-global-cycle org-cycle org-mode org-clock-persistence-insinuate
 ;;;;;;  turn-on-orgtbl org-version org-babel-load-file org-babel-do-load-languages)
-;;;;;;  "org" "org.el" (22181 47587))
+;;;;;;  "org" "org.el" (22187 570))
 ;;; Generated autoloads from org.el
 
 (autoload 'org-babel-do-load-languages "org" "\
@@ -2662,7 +2662,7 @@ Return output file name.
 
 ;;;### (autoloads (org-html-publish-to-html org-html-export-to-html
 ;;;;;;  org-html-convert-region-to-html org-html-export-as-html org-html-htmlize-generate-css)
-;;;;;;  "ox-html" "ox-html.el" "684fb6604bd46094dcfa925a73847391")
+;;;;;;  "ox-html" "ox-html.el" "8d9e21fbca3956b4966f88b6629fec27")
 ;;; Generated autoloads from ox-html.el
 
 (put 'org-html-head-include-default-style 'safe-local-variable 'booleanp)
@@ -2822,7 +2822,7 @@ The file is stored under the name chosen in
 
 ;;;### (autoloads (org-latex-publish-to-pdf org-latex-publish-to-latex
 ;;;;;;  org-latex-export-to-pdf org-latex-export-to-latex org-latex-convert-region-to-latex
-;;;;;;  org-latex-export-as-latex) "ox-latex" "ox-latex.el" "1c8701ff1664fa5a888ef968dfdd03e5")
+;;;;;;  org-latex-export-as-latex) "ox-latex" "ox-latex.el" "d27ca15eea14bcf3173e74f51b3d3e69")
 ;;; Generated autoloads from ox-latex.el
 
 (autoload 'org-latex-export-as-latex "ox-latex" "\
@@ -3022,7 +3022,7 @@ Return output file name.
 ;;;***
 
 ;;;### (autoloads (org-odt-convert org-odt-export-to-odt org-odt-export-as-odf-and-open
-;;;;;;  org-odt-export-as-odf) "ox-odt" "ox-odt.el" "4f62efc44f3530999fae7616f3dc3165")
+;;;;;;  org-odt-export-as-odf) "ox-odt" "ox-odt.el" "dbe881a2a6b2418430bba317d7adfd76")
 ;;; Generated autoloads from ox-odt.el
 
 (put 'org-odt-preferred-output-format 'safe-local-variable 'stringp)
@@ -3085,7 +3085,7 @@ using `org-open-file'.
 ;;;***
 
 ;;;### (autoloads (org-org-publish-to-org org-org-export-to-org org-org-export-as-org)
-;;;;;;  "ox-org" "ox-org.el" "6440d20a05301c140c648dbd92ddc734")
+;;;;;;  "ox-org" "ox-org.el" "8f2b09ccf51699abf1204d296e93a399")
 ;;; Generated autoloads from ox-org.el
 
 (autoload 'org-org-export-as-org "ox-org" "\
