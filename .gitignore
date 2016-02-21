@@ -20,3 +20,4 @@ url/
 .mc-lists.el
 *.elc
 helm-adaptive-history
+custom.el
