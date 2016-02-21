@@ -30,9 +30,9 @@ The configuration will automatically pull down and update packages as needed.
 
 ** Emacs first-stage initialization
 
-***Setup
+*** Setup
 
-This 
+This is for values that should be set before anything else.
 
 #+begin_src emacs-lisp
 ;(setq debug-on-error t)
