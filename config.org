@@ -712,11 +712,14 @@ directory) file for information on the functions, and see
 Code blocks can be loaded into the library of babel from any Org-mode
 file using the `org-babel-lob-ingest' function.
 
-
-
-
-
 *** org2jekyll
+   :PROPERTIES:
+   :CUSTOM_ID: org-to-jekyll-blog
+   :END:
+The org2jekyll package allows publishing org-mode articles to a jekyll
+blog, without having to use any jekyll constructs. I've added a fix to
+correct the link handling of generated images.
+
 #+begin_src emacs-lisp
   (with-package* org2jekyll
 
