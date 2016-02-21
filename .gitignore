@@ -21,3 +21,4 @@ url/
 *.elc
 helm-adaptive-history
 custom.el
+.#*
