@@ -721,82 +721,121 @@ blog, without having to use any jekyll constructs. I've added a fix to
 correct the link handling of generated images.
 
 #+begin_src emacs-lisp
-  (with-package* org2jekyll
+        (with-package* org2jekyll
 
-    (defun my-org-html-publish-to-html (plist filename pub-dir)
-      (save-excursion
-        (find-file (org-html-publish-to-html plist filename pub-dir))
-        (while (re-search-forward "src=\"img" nil t)
-          (replace-match "src=\"/img"))
-        (basic-save-buffer)
-        (kill-buffer)
-        )
-      )
+        (require 'ox-publish)
+        (require 'ox-html)
 
-    ;; These were set with 'custom-set-variables', but the custom file was
-    ;; read before org2jekyll was loaded, and it barfed at
-    ;; 'org2jekyll-input-directory' being undefined. RSF 2016-02-13
+          (defun my-org-html-publish-to-html (plist filename pub-dir)
+            (save-excursion
+              (find-file (org-html-publish-to-html plist filename pub-dir))
+              (while (re-search-forward "src=\"img" nil t)
+                (replace-match "src=\"/img"))
+              (basic-save-buffer)
+              (kill-buffer)
+              )
+            )
 
-    (setq org2jekyll-blog-author "sesamemucho"
-          org2jekyll-source-directory (expand-file-name "~/org/blog")
-          org2jekyll-jekyll-directory (expand-file-name "~/public_jekyll")
-          org2jekyll-jekyll-drafts-dir ""
-          org2jekyll-jekyll-posts-dir "_posts/"
-          org-publish-project-alist `(("default"
-                                       :base-directory ,(org2jekyll-input-directory)
-                                       :base-extension "org"
-                                       :publishing-directory ,(org2jekyll-output-directory)
+          (defun org-html--svg-image (source attributes info)
+            "Return \"object\" appropriate for embedding svg file SOURCE
+      with assoicated ATTRIBUTES. INFO is a plist used as a
+      communication channel.
 
-                                       :headline-levels 4
-                                       :section-numbers nil
-                                       :with-toc nil
-                                       :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
-                                       :html-preamble t
-                                       :recursive t
-                                       :make-index t
-                                       :html-extension "html"
-                                       :body-only t)
-                                      ("post"
-                                       :base-directory ,(org2jekyll-input-directory)
-                                       :base-extension "org"
-                                       :publishing-directory ,(org2jekyll-output-directory org2jekyll-jekyll-posts-dir)
-                                       :publishing-function my-org-html-publish-to-html
-                                       :headline-levels 4
-                                       :section-numbers nil
-                                       :with-toc nil
-                                       :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
-                                       :html-preamble t
-                                       :recursive t
-                                       :make-index t
-                                       :html-extension "html"
-                                       :body-only t)
-                                      ("images"
-                                       :base-directory ,(org2jekyll-input-directory)
-                                       :base-extension "jpg\\|gif\\|png\\|svg"
-                                       :publishing-directory ,(org2jekyll-output-directory)
-                                       :publishing-function org-publish-attachment
-                                       :recursive t)
-                                      ("images-old"
-                                       :base-directory ,(org2jekyll-input-directory "/img")
-                                       :base-extension "jpg\\|gif\\|png\\|svg"
-                                       :publishing-directory ,(org2jekyll-output-directory "/img")
-                                       :publishing-function org-publish-attachment
-                                       :recursive t)
-                                      ("js"
-                                       :base-directory ,(org2jekyll-input-directory "js")
-                                       :base-extension "js"
-                                       :publishing-directory ,(org2jekyll-output-directory "js")
-                                       :publishing-function org-publish-attachment
-                                       :recursive t)
-                                      ("css"
-                                       :base-directory ,(org2jekyll-input-directory "css")
-                                       :base-extension "css\\|el"
-                                       :publishing-directory ,(org2jekyll-output-directory "css")
-                                       :publishing-function org-publish-attachment
-                                       :recursive t)
-                                      ("web" :components ("post" "images" "js" "css"))))
+      The special attribute \"fallback\" can be used to specify a fallback
+      image file to use if the object embedding is not supported."
+            (let ((fallback (plist-get attributes :fallback))
+                  (attrs (org-html--make-attribute-string
+                          (plist-put attributes :fallback nil))))
+              (format "<object type=\"image/svg+xml\" data=\"/%s\" %s>\n%s</object>"
+                      source attrs (org-html-close-tag
+                           "img" (format "src=\"/%s\" %s" source attrs) info))))
 
-    )
+          (defun org-html--format-image (source attributes info)
+            "Return \"img\" tag with given SOURCE and ATTRIBUTES.
+    SOURCE is a string specifying the location of the image.
+    ATTRIBUTES is a plist, as returned by
+    `org-export-read-attribute'.  INFO is a plist used as
+    a communication channel."
+      (if (string= "svg" (file-name-extension source))
+          (org-html--svg-image source attributes info)
+        (org-html-close-tag
+         "img"
+         (org-html--make-attribute-string
+          (org-combine-plists
+           (list :src (format "/%s" source)
+                 :alt (if (string-match-p "^ltxpng/" source)
+                          (org-html-encode-plain-text
+                           (org-find-text-property-in-string 'org-latex-src source))
+                        (file-name-nondirectory source)))
+           attributes))
+         info)))
+
+          ;; These were set with 'custom-set-variables', but the custom file was
+          ;; read before org2jekyll was loaded, and it barfed at
+          ;; 'org2jekyll-input-directory' being undefined. RSF 2016-02-13
+
+          (setq org2jekyll-blog-author "you"
+                org2jekyll-source-directory (expand-file-name "~/org/blog")
+                org2jekyll-jekyll-directory (expand-file-name "~/public_jekyll")
+                org2jekyll-jekyll-drafts-dir ""
+                org2jekyll-jekyll-posts-dir "_posts/"
+                org-publish-project-alist `(("default"
+                                             :base-directory ,(org2jekyll-input-directory)
+                                             :base-extension "org"
+                                             :publishing-directory ,(org2jekyll-output-directory)
+
+                                             :headline-levels 4
+                                             :section-numbers nil
+                                             :with-toc nil
+                                             :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+                                             :html-preamble t
+                                             :recursive t
+                                             :make-index t
+                                             :html-extension "html"
+                                             :body-only t)
+                                            ("post"
+                                             :base-directory ,(org2jekyll-input-directory)
+                                             :base-extension "org"
+                                             :publishing-directory ,(org2jekyll-output-directory org2jekyll-jekyll-posts-dir)
+                                             ;;publishing-function my-org-html-publish-to-html
+                                             :publishing-function org-html-publish-to-html
+                                             :headline-levels 4
+                                             :section-numbers nil
+                                             :with-toc nil
+                                             :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+                                             :html-preamble t
+                                             :recursive t
+                                             :make-index t
+                                             :html-extension "html"
+                                             :body-only t)
+                                            ("images"
+                                             :base-directory ,(org2jekyll-input-directory)
+                                             :base-extension "jpg\\|gif\\|png\\|svg"
+                                             :publishing-directory ,(org2jekyll-output-directory)
+                                             :publishing-function org-publish-attachment
+                                             :recursive t)
+                                            ("images-old"
+                                             :base-directory ,(org2jekyll-input-directory "/img")
+                                             :base-extension "jpg\\|gif\\|png\\|svg"
+                                             :publishing-directory ,(org2jekyll-output-directory "/img")
+                                             :publishing-function org-publish-attachment
+                                             :recursive t)
+                                            ("js"
+                                             :base-directory ,(org2jekyll-input-directory "js")
+                                             :base-extension "js"
+                                             :publishing-directory ,(org2jekyll-output-directory "js")
+                                             :publishing-function org-publish-attachment
+                                             :recursive t)
+                                            ("css"
+                                             :base-directory ,(org2jekyll-input-directory "css")
+                                             :base-extension "css\\|el"
+                                             :publishing-directory ,(org2jekyll-output-directory "css")
+                                             :publishing-function org-publish-attachment
+                                             :recursive t)
+                                            ("web" :components ("post" "images" "js" "css"))))
+
+          )
+
 #+end_src
 ** Ack-and-a-half
 #+begin_src emacs-lisp
