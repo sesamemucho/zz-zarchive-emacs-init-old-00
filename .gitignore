@@ -21,3 +21,5 @@ url/
 *.elc
 helm-adaptive-history
 bookmarks
+custom.el
+.#*

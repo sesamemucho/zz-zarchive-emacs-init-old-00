@@ -30,9 +30,9 @@ The configuration will automatically pull down and update packages as needed.
 
 ** Emacs first-stage initialization
 
-***Setup
+*** Setup
 
-This 
+This is for values that should be set before anything else.
 
 #+begin_src emacs-lisp
 ;(setq debug-on-error t)
@@ -496,26 +496,10 @@ git.
 (setq backup-directory-alist `(("/tmp")))
 #+end_src
 
-
-** ido mode
-ido-mode is like magic pixie dust!
-#+begin_src emacs-lisp 
-;   (with-package* (ido ido-ubiquitous ido-vertical-mode)
-;     (setq ido-enable-flex-matching t
-;           ido-show-dot-for-dired t
-;           ido-save-directory-list-file nil
-;           ido-everywhere t)
-;     (ido-mode 1)
-;     (ido-vertical-mode 1)
-;     (ido-ubiquitous-mode)
-;     (setq ido-ubiquitous-enable-compatibility nil
-;           ido-enable-prefix nil
-;           ido-enable-flex-matching t
-;           ido-create-new-buffer 'always
-;           ido-use-filename-at-point t
-;           ido-max-prospects 10)
-;     )
-  
+** Browser
+Use EWW for browsing from Emacs
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'eww-browse-url)
 #+end_src
 
 ** Org mode
@@ -539,6 +523,11 @@ globally for later insertion into an Org-mode buffer.  See
 [[http://orgmode.org/manual/Handling-links.html#Handling-links][Handling-links]] in the Org-mode manual.
 #+begin_src emacs-lisp
   (define-key global-map "\C-cl" 'org-store-link)
+#+end_src
+
+For convenience, inside code blocks indent according to the block mode:
+#+begin_src emacs-lisp
+  (setq org-src-tab-acts-natively t)
 #+end_src
 
 **** General org-y stuff
@@ -588,8 +577,8 @@ globally for later insertion into an Org-mode buffer.  See
                                    "* TODO %?%t\nEntered on %u\n  %i\n")
                                   ("j" "Journal" entry (file+datetree ssmm-org-main-file)
                                    "* %?\nEntered on %T\n  %i\n" :clock-keep t)
-                                  ("p" "New project entry" entry (file+olp ssmm-org-main-file "heading two" "Projects")
-                                   "* %?\nEntered on %T\n" )
+                                  ("p" "New project entry" entry (file+olp ssmm-org-main-file "Projects")
+                                   "* %?\nEntered on %T\n" :unnarrowed t)
                                   ))
 
     (global-set-key "\C-cl" 'org-store-link)
@@ -683,15 +672,15 @@ to activate more languages using the customize interface for the
 one below.  The customize interface of `=org-babel-load-languages='
 contains an up to date list of the currently supported languages.
 #+begin_src emacs-lisp
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (plantuml . t)
-       (python . t)
-       (dot . t)
-       (shell . t)
-       (screen . t)
-       ))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (plantuml . t)
+     (python . t)
+     (dot . t)
+     (shell . t)
+     (screen . t)
+     ))
   (require 'ob-dot)
 #+end_src
 
@@ -728,11 +717,144 @@ directory) file for information on the functions, and see
 Code blocks can be loaded into the library of babel from any Org-mode
 file using the `org-babel-lob-ingest' function.
 
+*** org2jekyll
+   :PROPERTIES:
+   :CUSTOM_ID: org-to-jekyll-blog
+   :END:
+The org2jekyll package allows publishing org-mode articles to a jekyll
+blog, without having to use any jekyll constructs. I've added a fix to
+correct the link handling of generated images.
 
+#+begin_src emacs-lisp
+  (with-package* org2jekyll
 
+    (require 'ox-publish)
+    (require 'ox-html)
 
+    (defun my-org-html-publish-to-html (plist filename pub-dir)
+      (save-excursion
+        (find-file (org-html-publish-to-html plist filename pub-dir))
+        (while (re-search-forward "src=\"img" nil t)
+          (replace-match "src=\"/img"))
+        (basic-save-buffer)
+        (kill-buffer)
+        )
+      )
 
+    (defun org-html--svg-image (source attributes info)
+      "Return \"object\" appropriate for embedding svg file SOURCE
+      with assoicated ATTRIBUTES. INFO is a plist used as a
+      communication channel.
 
+      The special attribute \"fallback\" can be used to specify a fallback
+      image file to use if the object embedding is not supported."
+      (let ((fallback (plist-get attributes :fallback))
+            (attrs (org-html--make-attribute-string
+                    (plist-put attributes :fallback nil))))
+        (format "<object type=\"image/svg+xml\" data=\"/%s\" %s>\n%s</object>"
+                source attrs (org-html-close-tag
+                              "img" (format "src=\"/%s\" %s" source attrs) info))))
+
+    (defun org-html--format-image (source attributes info)
+      "Return \"img\" tag with given SOURCE and ATTRIBUTES.
+    SOURCE is a string specifying the location of the image.
+    ATTRIBUTES is a plist, as returned by
+    `org-export-read-attribute'.  INFO is a plist used as
+    a communication channel."
+      (if (string= "svg" (file-name-extension source))
+          (org-html--svg-image source attributes info)
+        (org-html-close-tag
+         "img"
+         (org-html--make-attribute-string
+          (org-combine-plists
+           (list :src (format "/%s" source)
+                 :alt (if (string-match-p "^ltxpng/" source)
+                          (org-html-encode-plain-text
+                           (org-find-text-property-in-string 'org-latex-src source))
+                        (file-name-nondirectory source)))
+           attributes))
+         info)))
+
+    ;; These were set with 'custom-set-variables', but the custom file was
+    ;; read before org2jekyll was loaded, and it barfed at
+    ;; 'org2jekyll-input-directory' being undefined. RSF 2016-02-13
+
+    (setq org2jekyll-blog-author "you"
+          org2jekyll-source-directory (expand-file-name "~/org/blog")
+          org2jekyll-jekyll-directory (expand-file-name "~/public_jekyll")
+          org2jekyll-jekyll-drafts-dir ""
+          org2jekyll-jekyll-posts-dir "_posts/"
+
+          )
+    (defun my-org2jekyll-mode ()
+      (org-mode)
+      (org2jekyll-mode)
+      )
+
+    (add-to-list 'auto-mode-alist `(,(concat org2jekyll-source-directory "/.*\\.org$") . my-org2jekyll-mode))
+
+    (defun ssmm-setup-org-publish-alist ()
+      (setq org-publish-project-alist `(("default"
+                                         :base-directory ,(org2jekyll-input-directory)
+                                         :base-extension "org"
+                                         :publishing-directory ,(org2jekyll-output-directory "")
+                                         :publishing-function my-org-html-publish-to-html
+                                         :headline-levels 4
+                                         :section-numbers nil
+                                         :with-toc nil
+                                         :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+                                         :html-preamble t
+                                         :recursive t
+                                         :make-index t
+                                         :html-extension "html"
+                                         :body-only t)
+                                        ("post"
+                                         :base-directory ,(org2jekyll-input-directory)
+                                         :base-extension "org"
+                                         :publishing-directory ,(org2jekyll-output-directory org2jekyll-jekyll-posts-dir)
+                                         :publishing-function my-org-html-publish-to-html
+                                          ;:publishing-function org-html-publish-to-html
+                                         :headline-levels 4
+                                         :section-numbers nil
+                                         :with-toc nil
+                                         :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+                                         :html-preamble t
+                                         :recursive t
+                                         :make-index t
+                                         :html-extension "html"
+                                         :body-only t)
+                                        ("images"
+                                         :base-directory ,(org2jekyll-input-directory "img")
+                                         :base-extension "jpg\\|gif\\|png\\|svg"
+                                         :publishing-directory ,(org2jekyll-output-directory "img")
+                                         :publishing-function org-publish-attachment
+                                         :recursive t)
+                                        ("images-old"
+                                         :base-directory ,(org2jekyll-input-directory "/img")
+                                         :base-extension "jpg\\|gif\\|png\\|svg"
+                                         :publishing-directory ,(org2jekyll-output-directory "/img")
+                                         :publishing-function org-publish-attachment
+                                         :recursive t)
+                                        ("js"
+                                         :base-directory ,(org2jekyll-input-directory "js")
+                                         :base-extension "js"
+                                         :publishing-directory ,(org2jekyll-output-directory "js")
+                                         :publishing-function org-publish-attachment
+                                         :recursive t)
+                                        ("css"
+                                         :base-directory ,(org2jekyll-input-directory "css")
+                                         :base-extension "css\\|el"
+                                         :publishing-directory ,(org2jekyll-output-directory "css")
+                                         :publishing-function org-publish-attachment
+                                         :recursive t)
+                                        ("web" :components ("post" "images" "js" "css")))
+            ))
+
+    (ssmm-setup-org-publish-alist)
+
+    )
+
+#+end_src
 ** Ack-and-a-half
 #+begin_src emacs-lisp
     (with-package ack-and-a-half
@@ -946,6 +1068,7 @@ file using the `org-babel-lob-ingest' function.
 
     (global-set-key (kbd "C-x c <f8>") (lambda () (interactive) (helm :sources '(programs-helm-source))))
 
+  (global-set-key (kbd "C-x c g") 'helm-google)
 
     (helm-mode 1)
     )
@@ -1072,19 +1195,8 @@ Try using this instead of macros.
 #+end_src
 ** Parens
 #+begin_src emacs-lisp
-;(with-package paredit*
-;  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-;  (add-hook 'lisp-mode-hook 'paredit-mode)
-;  (add-hook 'scheme-mode-hook 'paredit-mode)
-;)
-
-(with-package* paren
-  (show-paren-mode))
-
-;(with-package* parenface
-;  (set-face-foreground 'parenface-paren-face "Gray40")
-;  (set-face-foreground 'parenface-bracket-face "Gray60")
-;  (set-face-foreground 'parenface-curly-face "Gray60"))
+  (with-package smartparens-config*
+  )
 #+end_src
 
 ** Multi-term
