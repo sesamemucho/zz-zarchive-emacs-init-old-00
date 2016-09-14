@@ -1,222 +1,278 @@
-;;; workgroup-switcher.el -- An interface for switching workgroups between frames
-;;
-;; Copyright (C) 2014 Bob Forgey
-;;
-;; Author: Bob Forgey <sesamemucho at gmail dot com>
-;; Keywords: session management window-configuration persistence
-;; Homepage: https://github.com/sesamemucho/workgroup-switcher
-;; Package-requires:
-;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2 of the License, or (at
-;; your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program; if not, write to the Free Software
-;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-;; USA
-;;
-;;; Commentary:
-;;
-;; This is my customizations for the excellent Emacs session manager
-;; workgroups2. It provides for automatic creation (and persistance)
-;; of workspaces for a desired number of frames and workspaces. It
-;; also allows the user to name each workspace, and sets up
-;; keybindings to switch between workspaces.
-;;
-;; If you find a bug or other issue, please post it here:
-;; https://github.com/sesamemucho/workgroup-switcher/issues
-;;
-;; Usage
-;; -----
-;; workgroup-switcher is designed to make it convenient to switch
-;; between sets of workgroups across multiple frames. If, for
-;; instance, you have two monitors, you might have one frame in one
-;; monitor and one frame in the other. You can then switch workgroups
-;; in parallel across both monitors.
-;; 
-;; To use, install and configure as below. If you're using the default
-;; settings, you'll have two frames and twelve workspaces, accessed by
-;; s-fn, where fn is one of the twelve function keys.
-;; 
-;; Start the workspace switcher going with M-x wgsw-start-workgroups
-;; 
-;; 1. Arrange the frames as you like.
-;; 
-;; Switch to a workspace with s-fn. s-f3 will switch to workspace 3
-;; and so on. The workspace configuration is automatically saved when
-;; auto-save activates, or when you exit Emacs.
-;; 
-;; Use the command M-x wgsw-set-current-frame-description to set a
-;; description of the current frame. This description will show up in
-;; the title bar of the frame. The name of the current workspace is
-;; shown in parentheses on the mode line. It has the form (wnsm) where
-;; n identifies the workspace and m identifies the frame.
-;;
-;; Install
-;; ----------------------
-;; Add the lines below to your .emacs configuration.
-;;
-;; (require 'workgroup-switcher)
-;;
-;; <settings here>
-;;
-;;
-;; Configure
-;; ----------------------
-;;
-;; Change number of frames
-;; (setq wgsw-number-of-frames 3)
-;;
-;; Change number of workspaces
-;; (setq wgsw-number-of-workgroups 10)
-;;
-;; Change the key bindings to something very similar to the default:
-;; C-<fn>, where n is the number of the workspace
-;; (setq wgsw-keybinding-template "C-<f%d>")
-;;
-;; If you want something else, you can define a function
-;; wgsw-keybinding-func that takes the number of the workspace (from 1
-;; to wgsw-number-of-workgroups) and returns a string suitable for
-;; input to kbd.
-;;
-;; (defun wgsw-keybinding-func (i)
-;;   (if (< i 6)
-;;       (format "C-<f%d>" i)
-;;     (format "C-S-<f%d>" (- i 5)))
-;;   )
-;; This function will bind C-f1 through C-f5 to switch to workspaces 1
-;; through 5, and keys C-S-f1 through C-S-f5 to switch to workspaces 6
-;; through 10.
-;; 
-;; You may want to bind wgsw-set-current-frame-description to a key to
-;; make it convenient to set a description for the current frame.
-
 (require 'workgroups2)
 
-  (defvar wgsw-frame-names '()
-    "Property list of wg names vs descriptions.")
+(defvar wgsw-frame-name-defaults '()
+  "Property list of wg names vs descriptions.")
 
-  (defvar wgsw-number-of-frames 2
-    "Desired number of frames")
+(defvar wgsw-number-of-frames 1
+  "Desired number of frames")
 
-  (defvar wgsw-number-of-workgroups 12
-    "Desired number of workgroups")
+(defvar wgsw-number-of-workgroups 12
+  "Desired number of workgroups")
 
-  (defvar wgsw-keybinding-template "s-<f%d>"
-    "Template for keybinding to switch between workspaces")
+(defvar wgsw-keybinding-template "s-<f%d>"
+  "Template for keybinding to switch between workspaces")
 
-  (defvar wgsw-keybinding-func)
+(defvar wgsw-default-frame-descriptions '()
+  "Plist for default frame descriptions."
+  ;; Indexed by frame name (i.e., "w2s0")
+  )
 
-  (defun wgsw-set-current-frame-description (desc)
-    "Set the description for the current wg frame to `desc'"
-    (interactive "MEnter frame description: ")
-    (let ((wg-name (wg-workgroup-name (wg-current-workgroup t))))
-      (wgsw-set-frame-description wg-name desc)
-      )
+(defvar wgsw-keybinding-func)
+
+(defun wgsw-get-frame-description-param ()
+  "Gets the current frame descriptions from the wg session"
+  (wg-session-parameter 'frame-desc)
+  ;;;(wg-session-parameter (wg-current-session t) 'frame-desc)
+  ;;(wg-session-parameter (wg-current-session t) 'frame-desc '(('ha "")))
+  )
+
+;; (defun wgsw-get-blank-frame-description ()
+;;   "Finds all entries for which the description is blank"
+;;   (interactive)
+;;   (let ((fdcopy (copy-alist (wgsw-get-frame-description-param))))
+    
+;;     (wg-set-session-parameter (wg-current-session) 'frame-desc 
+;;                               (rassq-delete-all "" fdcopy))
+;;     ))
+
+;; (defun wgsw-clean-frame-description ()
+;;   "Removes all entries for which the description is blank"
+;;   (interactive)
+;;   (let ((fdcopy (copy-alist (wgsw-get-frame-description-param))))
+;;     (wg-set-session-parameter (wg-current-session) 'frame-desc 
+;;                               (rassq-delete-all "" fdcopy))
+;;     ))
+
+(defun wgsw-set-current-frame-description (desc)
+  "Set the description for the current wg frame to `desc'"
+  (interactive "MEnter frame description: ")
+  (let ((wg-name (wg-workgroup-name (wg-current-workgroup t))))
+    (wgsw-set-frame-description wg-name desc)
     )
+  )
 
-  (defun wgsw-set-frame-description (wg-name desc)
-    "Set the description for wg workgroup wg-name to `desc'"
-    (setq wgsw-frame-names (lax-plist-put
-                               wgsw-frame-names
-                               wg-name
-                               desc)
-          ))
+(defun wgsw-set-frame-description (wg-name desc)
+  "Set the description for wg workgroup wg-name to `desc'.
+   Remove duplicates before saving so that we don't see the 
+   old descriptions in wgsw-read-desc-from-completion."
+  (let ((frame-names (assq-delete-all wg-name (wgsw-get-frame-description-param))))
+    (add-to-list 'frame-names (cons (intern wg-name) desc))
+    ;;(wg-set-session-parameter (wg-current-session) 'frame-desc frame-names)
+    (wg-set-session-parameter 'frame-desc frame-names)
+    )
+  )
 
-  (setq frame-title-format '(multiple-frames ("%b" "     " (:eval (wgsw-show-frame-desc)) )
-                                             ("" invocation-name "@" system-name)))
+;; (defun wgsw-clear-current-frame-description ()
+;;   "Clear the description for the current wg frame."
+;;   (interactive)
+;;   (let ((wg-name (wg-workgroup-name (wg-current-workgroup t))))
+;;     (wgsw-set-frame-description wg-name "")
+;;     )
+;;   )
 
-  (defun wgsw-show-frame-desc ()
-    (interactive)
-    (or (lax-plist-get wgsw-frame-names
-                       (wg-workgroup-name (wg-current-workgroup t)))
+;; (defun wgsw-clear-frame-description (wg-name)
+;;   "Clear the description for wg workgroup wg-name."
+;;   (interactive)
+;;   (wgsw-set-frame-description wg-name "")
+;;   )
+
+;; (defun wgsw-clear-current-frame-description-and-maybe-kill-projectile-buffers ()
+;;   "Clear current wg frame and kill the projectile buffers."
+;;   (interactive)
+;;   (if (fboundp 'projectile-kill-buffers)
+;;       (progn
+;;         (projectile-kill-buffers)
+;;         (wgsw-clear-current-frame-description)
+;;         ))
+;;   )
+
+(defun wgsw-set-frame-description-from-default (wg-name)
+  "Uses description from wgsw-default-frame-descriptions if present. Otherwise sets to blank."
+  (wgsw-set-frame-description wg-name (or (cdr (assoc wg-name wgsw-default-frame-description))
+                                          ""))
+  )
+
+(setq frame-title-format '(multiple-frames ("%b" "     " (:eval (wgsw-show-frame-desc)) )
+                                           ("" invocation-name "@" system-name)))
+
+(defun wgsw-show-frame-desc ()
+  (interactive)
+  (let ((frame-names (wgsw-get-frame-description-param)))
+    (or (cdr (assoc (intern (wg-workgroup-name (wg-current-workgroup t)))
+                    frame-names))
         "")
+    ))
+
+;; (defun wgsw-read-desc-from-completion ()
+;;   (interactive)
+;;   (let* ((desc (completing-read
+;;                 "Enter workgroup description: "
+;;                 (wgsw-get-wg-descs)
+;;                 ))
+;;          (fram (car (rassoc desc (wgsw-get-frame-description-param)))))
+;;     (message (format "desc is %s" desc))
+;;     fram
+;;     )
+;;   )
+
+(defun wgsw-read-desc-from-completion ()
+  (interactive)
+  (let* ((desc (smex-completing-read
+                (wgsw-get-wg-descs)
+                ""
+                ))
+         (fram (car (rassoc desc (wgsw-get-frame-description-param)))))
+    (message (format "desc is %s" desc))
+    fram
     )
+  )
 
-  (defun wgsw-goto-workgroup (wg-name)
-    ;; Seems like this should use mapc...
-    (dotimes (s (length (frames-on-display-list)))
-      (let ((f (nth s (frames-on-display-list))))
-        (select-frame f)
-        (wg-switch-to-workgroup (format "%ss%d" wg-name s) t)
-        ))
+(defun wgsw-goto-workgroup-from-completion ()
+  (interactive)
+  (let ((fram (wgsw-read-desc-from-completion)))
+    (wgsw-goto-workgroup
+     (replace-regexp-in-string "^\\(w[0-9][0-9]*\\)\\(.*\\)$" "\\1" (symbol-name fram)))
     )
+  )
 
-   (defun wgsw-set-kbd (i)
-     (kbd (if (fboundp 'wgsw-keybinding-func)
-              (wgsw-keybinding-func i)
-            (format wgsw-keybinding-template i))))
+(defun wgsw-foo ()
+  (interactive)
+  (let ((fram (wgsw-read-desc-from-completion)))
+    (message (format "frame name is %s" fram))
+    (message (format "frame is %s name is %s" fram (replace-regexp-in-string "^\\(w[0-9][0-9]*\\)\\(.*\\)$" "\\1" fram)))
+    )
+  )
 
-  (defun wgsw-set-wg-keybindings ()
-    (interactive)
-    (dotimes (i wgsw-number-of-workgroups)
-      (let ((w (format "w%d" (1+ i)))
-            )
+(defun wgsw-goto-workgroup (wg-name)
+  ;; Seems like this should use mapc...
+  (dotimes (s (length (frames-on-display-list)))
+    (let ((f (nth s (frames-on-display-list))))
+      (select-frame f)
+      (wg-switch-to-workgroup (format "%ss%d" wg-name s) t)
+      ))
+  )
+
+(defun wgsw-set-kbd (i)
+  (kbd (if (fboundp 'wgsw-keybinding-func)
+           (wgsw-keybinding-func i)
+         (format wgsw-keybinding-template i))))
+
+(defun wgsw-set-wg-keybindings ()
+  (interactive)
+  (dotimes (i wgsw-number-of-workgroups)
+    (let ((w (format "w%d" (1+ i)))
+          )
       (global-set-key (wgsw-set-kbd (1+ i)) `(lambda () (interactive) (wgsw-goto-workgroup ,w)))))
-    )
+  )
 
-  (defun wgsw-save-wg-session ()
-    (interactive)
-    (wg-write-session-file wg-default-session-file)
-    )
+(defun wgsw-save-wg-session ()
+  (interactive)
+  ;; (wg-set-session-parameter (wg-current-session) 'frame-desc wgsw-frame-names)
+  (wg-write-session-file wg-default-session-file)
+  )
 
-  (defun wgsw-start-workgroups ()
-    "Starts workgroups from workgroups2, assuming 2 screens."
-    (interactive)
-    (make-frame)
+(defun wgsw-start-workgroups ()
+  "Starts workgroups from workgroups2, assuming 2 screens."
+  (interactive)
+  (make-frame)
 
-    (wgsw-set-wg-keybindings)
-    (setq wg-emacs-exit-save-behavior nil)
-    (wg-find-session-file wg-default-session-file)
-    (add-hook 'auto-save-hook #'wgsw-save-wg-session)
-    (add-hook 'kill-emacs-hook #'wgsw-save-wg-session)
+  (wgsw-set-wg-keybindings)
+  (setq wg-emacs-exit-save-behavior nil)
+  (wg-find-session-file wg-default-session-file)
+  (add-hook 'auto-save-hook #'wgsw-save-wg-session)
+  (add-hook 'kill-emacs-hook #'wgsw-save-wg-session)
 
-    (wgsw-goto-workgroup "w1")
-    )
+  ;(wg-session-parameter (wg-current-session t) 'frame-desc '())
+  (wg-session-parameter 'frame-desc '())
+  (wgsw-goto-workgroup "w1"))
 
-  (defun wgsw-get-name ()
-    (interactive)
-    (wg-workgroup-name (wg-current-workgroup t))
-    )
+(defun wgsw-get-name ()
+  (interactive)
+  (wg-workgroup-name (wg-current-workgroup t))
+  )
 
-  (defun wgsw-setup-workgroups (arg)
-    "Initialize workgroups from workgroups2, assuming 2 screens."
-    (interactive "P")
-    (if arg
+(defun wgsw-setup-workgroups (arg)
+  "Initialize workgroups from workgroups2, assuming 2 screens."
+  (interactive "P")
+  (if arg
         (delete-file wg-default-session-file t)
-      )
+    )
 
-    (dotimes (i (- wgsw-number-of-frames (length (frames-on-display-list))))
-      (make-frame))
+  ;;(wg-set-session-parameter (wg-current-session t) 'frame-desc '(("hi" "")))
 
-    (if (not (file-exists-p wg-default-session-file))
-        (progn
+  (dotimes (i (- wgsw-number-of-frames (length (frames-on-display-list))))
+    (make-frame))
+
+  (if (not (file-exists-p wg-default-session-file))
+      (progn
 
         (dotimes (s (length (frames-on-display-list)))
           (let ((f (nth s (frames-on-display-list))))
             (select-frame f)
             (dotimes (i wgsw-number-of-workgroups)
-              (wg-create-workgroup (format "w%ds%d" (1+ i) s)))
-          ))
-
+              (wg-create-workgroup (format "w%ds%d" (1+ i) s))
+              ;; (let ((frame-name (format "w%ds%d" (1+ i) s)))
+              ;;   (wg-create-workgroup frame-name)
+              ;;   ;(wgsw-set-frame-description frame-name (lax-plist-get wgsw-frame-name-defaults frame-name))
+              ;;   )
+              )
+            ))
+        (mapc 'wgsw-set-frame-description-from-default (wg-workgroup-names))
         ))
 
-    (wgsw-set-wg-keybindings)
-    (if (not (file-exists-p wg-default-session-file))
-        (progn
-          (wg-save-session-as wg-default-session-file t)
-          ;;(wg-save-frames)
-          ;;(wg-write-session-file wg-default-session-file)
-          ))
-    (add-hook 'auto-save-hook #'wgsw-save-wg-session)
-    (add-hook 'kill-emacs-hook #'wgsw-save-wg-session)
-    )
+  (wgsw-set-wg-keybindings)
+  (if (not (file-exists-p (wg-get-session-file)))
+      (progn
+        (wg-save-session t)
+        ;;(wg-save-frames)
+        ;;(wg-write-session-file wg-default-session-file)
+        ))
+  (add-hook 'auto-save-hook #'wgsw-save-wg-session)
+  (add-hook 'kill-emacs-hook #'wgsw-save-wg-session)
+  )
+
+(defun wgsw-get-properties (p)
+  "Returns a list of the properties of p.
+Assumes each property is a single item. Discards
+properties that are an empty string."
+  (let ((x))
+    (loop while p do
+          (if (not (string= (cadr p) ""))
+              (setq x (cons (cadr p) x))
+          )
+          (setq p (cddr p))
+          )
+    x)
+)
+
+(defun wgsw-find-blanks ()
+  "Returns a list of keys of wgsw-get-frame-description-param for
+  which the property is blank."
+
+  (loop for (key . value) in (wgsw-get-frame-description-param)
+        if (not (eq (type-of value) 'string))
+        collect key into retval
+        else
+        if (string= "" value)
+        collect key into retval
+        finally return retval
+        )
+)
+
+(defun wgsw-get-wg-descs ()
+  (mapcar 'cdr (wgsw-get-frame-description-param))
+)
+
+(defun wgsw-print ()
+  (interactive)
+  (mapc (lambda (x) (print x)) (wgsw-get-frame-description-param))
+  )
+
+(defun wgsw-a ()
+  (interactive)
+  (mapc (lambda (x) (print x)) (wgsw-find-blanks))
+)
+
+
 
 (provide 'workgroup-switcher)

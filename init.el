@@ -6,32 +6,12 @@
 ;;
 
 ;; load Org-mode from source when the ORG_HOME environment variable is set
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-;;(message (concat "0 Org version is " (org-version)))
-
-;; (mapc
-;;  (lambda (x)
-;;    (let ((feat (cdr (assoc 'provide (cdr x)))))
-;;      (and (string-match "^org\\|^ox\\\|^ob" (symbol-name feat))
-;; 	  (featurep feat)
-;; 	  (unload-feature feat t))))
-;;  load-history)
-
-(package-initialize)
-
 (when (getenv "ORG_HOME")
   (let ((org-lisp-dir (expand-file-name "lisp" (getenv "ORG_HOME"))))
     (when (file-directory-p org-lisp-dir)
       (add-to-list 'load-path org-lisp-dir)
-      ;;(require 'org)
-      (load-library "org")
-      )))
-(message (concat "1 Org version is " (org-version)))
-(message (locate-library "org"))
+      (require 'org))))
+
 ;; load the starter kit from the `after-init-hook' so all packages are loaded
 (add-hook 'after-init-hook
  `(lambda ()
@@ -49,6 +29,3 @@
 
 ;;; init.el ends here
 (provide 'init) ; make (require 'init) happy
-
-;; For debugging
-;; (setq config-dir (expand-file-name "~/.emacs.d"))
