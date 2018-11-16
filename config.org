@@ -36,9 +36,8 @@ This is for values that should be set before anything else.
 
 #+begin_src emacs-lisp
 ;(setq debug-on-error t)
-  ;;(set-default-font "-unknown-Inconsolata-normal-normal-normal-*-12-*-*-*-m-0-iso10646-1")
     (add-to-list 'load-path "~/.emacs.d/lisp")
-    
+    (set-frame-font "Inconsolata 12")
     ;;; Turn off the annoying crap immediately
     (menu-bar-mode -1)
     (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -99,7 +98,13 @@ This code should be executed before any customization files are loaded.
   (load custom-file 'noerror)
 #+end_src
 
-
+*** Local emacs package
+#+begin_src emacs-lisp
+  (require 'elpa-mirror)
+  (setq elpamr-default-output-directory "~/myelpa")
+  (add-to-list 'package-archives
+                 '("myelpa" . "~/myelpa/"))
+#+end_src
 ** Universal settings
 *** Set variables
 #+begin_src emacs-lisp
@@ -502,6 +507,14 @@ Use EWW for browsing from Emacs
 (setq browse-url-browser-function 'eww-browse-url)
 #+end_src
 
+** Pinboard
+"Pinboard is a bookmarking website for introverted people in a hurry."
+#+begin_src emacs-lisp
+  (with-package* pinboard-list
+  (setq pinboard-api-token "grumpydog:D2F6E5673E8251BD9E80")
+  )
+#+end_src
+
 ** Org mode
 Configuration for the eminently useful [[http://orgmode.org/][Org Mode]].
 
@@ -532,78 +545,597 @@ For convenience, inside code blocks indent according to the block mode:
 
 **** General org-y stuff
 
+Enable misc org modules:
+#+BEGIN_SRC emacs-lisp
+(setq org-modules (quote
+                   (org-bbdb
+        	        org-bibtex
+                    org-crypt
+                    org-gnus
+                    org-id
+                    org-info
+                    org-habit
+                    org-inlinetask
+                    org-irc
+                    org-mew
+                    org-mhe
+                    org-protocol
+                    org-rmail
+                    org-vm
+                    org-wl
+                    org-w3m
+                    )
+                   )
+      )
+#+END_SRC
+Common org tags.
 #+begin_src emacs-lisp
-
-  ;; Automatically tracks when TODO items are DONEd.
-  (setq org-log-done 'time)
-
-  ;; A default name to give context to some of the elisp farther down.
-  ;; It generally gets changed in a system or user file.
-  (setq ssmm-org-main-file (expand-file-name "~/org/organizer.org"))
-
-    (defun ssmm-org-make-checkbox ()
-      "Make this line into a checkbox"
-      (interactive)
-      (beginning-of-line)
-      (insert " - [ ] "))
-
-    (defun ssmm-org-auto-fill ()
-      (if (string-match-p "^[0-9]+\.org" (buffer-name)) (auto-fill-mode 1))
-      )
-
-    (defun my-org-mode-hook ()
-      (local-set-key (kbd "C-c C-<f9>") 'ssmm-org-make-checkbox)
-      (local-set-key (kbd "C-<f9>") 'org-metaright)
-      (ssmm-org-auto-fill)
-      )
-
-    (add-hook 'org-mode-hook 'my-org-mode-hook t)
-    ;(setq prelude-org-mode-hook nil)
-
-    (defun ssmm/org-open-other-frame ()
-      "Jump to bookmark in another frame. See `bookmark-jump' for more."
-      (interactive)
-      (let ((org-link-frame-setup (acons 'file 'find-file-other-frame org-link-frame-setup)))
-        (org-open-at-point)))
-
+  (setq org-tag-alist '(("@Work" . ?w)
+                        ("@Home" . ?h)
+                        ("@Phone" . ?p)
+                        ("@Computer" . ?c)
+                        ))
+  ;; (setq org-tag-alist '((:startgroup)
+  ;;                       ("GTD")
+  ;;                       (:grouptags)
+  ;;                       ("@work" . ?w)
+  ;;                       ("@home" . ?h)
+  ;;                       ("@phone" . ?p)
+  ;;                       ("@computer" . ?c)
+  ;;                       (:endgroup)))
 #+end_src
+**** habits
+
+ «Org has the ability to track the consistency of a special category of
+ TODOs, called “habits”.»
+
+ - http://orgmode.org/manual/Tracking-your-habits.html
+ - http://orgmode.org/worg/org-tutorials/tracking-habits.html
+
+ - global STYLE property values for completion
+ #+BEGIN_SRC emacs-lisp
+   (setq org-global-properties (quote (("STYLE_ALL" . "habit"))))
+ #+END_SRC
+
+ - position the habit graph on the agenda to the right of the default
+ #+BEGIN_SRC emacs-lisp
+   (setq org-habit-graph-column 50)
+ #+END_SRC
+
+ #+begin_src emacs-lisp
+
+   ;; Automatically tracks when TODO items are DONEd.
+   (setq org-log-done 'time)
+
+   ;; A default name to give context to some of the elisp farther down.
+   ;; It generally gets changed in a system or user file.
+   (setq ssmm-org-main-file (expand-file-name "~/org/organizer.org"))
+
+     (defun ssmm-org-make-checkbox ()
+       "Make this line into a checkbox"
+       (interactive)
+       (beginning-of-line)
+       (insert " - [ ] "))
+
+     (defun ssmm-org-auto-fill ()
+       (if (string-match-p "^[0-9]+\.org" (buffer-name)) (auto-fill-mode 1))
+       )
+
+     (defun my-org-mode-hook ()
+       (local-set-key (kbd "C-c C-<f9>") 'ssmm-org-make-checkbox)
+       (local-set-key (kbd "C-<f9>") 'org-metaright)
+       (ssmm-org-auto-fill)
+       )
+
+     (add-hook 'org-mode-hook 'my-org-mode-hook t)
+     ;(setq prelude-org-mode-hook nil)
+
+     (defun ssmm/org-open-other-frame ()
+       "Jump to bookmark in another frame. See `bookmark-jump' for more."
+       (interactive)
+       (let ((org-link-frame-setup (acons 'file 'find-file-other-frame org-link-frame-setup)))
+         (org-open-at-point)))
+
+ #+end_src
 
 **** Org agenda
+org agenda stuff is from
+[[https://raw.githubusercontent.com/novoid/dot-emacs/master/config.org][Karl Voit's config file]] and
+[[https://github.com/alphapapa/org-super-agenda][Supercharge your Org daily/weekly agenda by grouping items]]
+
+#+begin_src emacs-lisp
+;  (with-package* org-super-agenda
+;  )
+#+end_src
+<2017-10-07 Sat>
+Definition of =my-super-agenda-groups=, my central configuration of super-agenda:
+
+#+BEGIN_SRC emacs-lisp
+;  (setq my-super-agenda-groups
+;        '(;; Each group has an implicit boolean OR operator between its selectors.
+;          (:name "Today"  ; Optionally specify section name
+;                 :time-grid t  ; Items that appear on the time grid
+;                 )
+;          (:name "Important" :priority "A")
+;          (:priority<= "B"
+;                       ;; Show this section after "Today" and "Important", because
+;                       ;; their order is unspecified, defaulting to 0. Sections
+;                       ;; are displayed lowest-number-first.
+;                       :order 1)
+;          ;; no habits yet? (:name "Habits" :habit t :order 2)
+;          (:name "Shopping" :tag "Shopping" :order 3)
+;                 ;; Boolean AND group matches items that match all subgroups
+;                 ;;  :and (:tag "shopping" :tag "@town")
+;                 ;; Multiple args given in list with implicit OR
+;                 ;;  :tag ("food" "dinner"))
+;                 ;;  :habit t
+;                 ;;  :tag "personal")
+;          (:name "Started" :todo "STARTED" :order 5)
+;          ;;(:name "Space-related (non-moon-or-planet-related)"
+;          ;;       ;; Regexps match case-insensitively on the entire entry
+;          ;;       :and (:regexp ("space" "NASA")
+;          ;;                     ;; Boolean NOT also has implicit OR between selectors
+;          ;;                     :not (:regexp "moon" :tag "planet")))
+;          (:todo "WAITING" :order 9)  ; Set order of this section
+;          (:name "read" :tag "2read" :order 15)
+;          ;; Groups supply their own section names when none are given
+;          (:todo ("SOMEDAY" "WATCHING")
+;                 ;; Show this group at the end of the agenda (since it has the
+;                 ;; highest number). If you specified this group last, items
+;                 ;; with these todo keywords that e.g. have priority A would be
+;                 ;; displayed in that group instead, because items are grouped
+;                 ;; out in the order the groups are listed.
+;                 :order 25)
+;          (:name "reward"
+;                 :tag ("reward" "lp")
+;                 :order 100
+;                 )
+;
+;          ;; After the last group, the agenda will display items that didn't
+;          ;; match any of these groups, with the default order position of 99
+;
+;        )
+;      )
+#+END_SRC
+
+=my-super-agenda()= is a function so that I am able to call the agenda
+interactively or within =my-org-agenda()= which is defined further
+down below.
+
+#+BEGIN_SRC emacs-lisp
+;;  (defun my-super-agenda()
+ ;   "generates my super-agenda"
+;    (interactive)
+;    (org-super-agenda-mode)
+;    (let
+;        ((org-super-agenda-groups my-super-agenda-groups))
+;      (org-agenda nil "a")
+;      )
+;    )
+#+END_SRC
+
+*** org-agenda-custom-commands → long list of agenda definitions
+
+#+BEGIN_SRC emacs-lisp
+;  (setq org-agenda-custom-commands
+;        (quote (
+;
+;                ("b" "Super Agenda" agenda ""
+;                 (org-super-agenda-mode)
+;                 ((org-super-agenda-groups my-super-agenda-groups))
+;                 (org-agenda nil "a"))
+;
+;                ("A" "Agenda" agenda ""
+;                 (org-agenda nil "a"))
+;
+;                ("n" "no TODO events +180d"
+;                 ((agenda "no TODO events +180d"
+;                          ((org-agenda-span 180)
+;                           (org-agenda-time-grid nil)
+;                           (org-agenda-entry-types '(:timestamp :sexp))
+;                           (org-agenda-skip-function
+;                            '(or
+;                              (org-agenda-skip-entry-if 'todo 'any);; skip if any TODO state is found
+;                              (org-agenda-skip-entry-if 'category "infonova");; skip if any TODO state is found
+;                              (my-skip-tag "lp")
+;                              )
+;                            )
+;                           ;;(org-agenda-skip-function '(my-skip-tag "lp"))
+;                          )))
+;                 nil ("~/org/agenda_180d_filtered.html"))
+;
+;                ("D" "detail agenda"
+;                 ((agenda "detail agenda"
+;                          ((org-agenda-span 31)
+;                           (org-agenda-time-grid nil)
+;                          )))
+;                 nil ("~/org/agenda_details.html"))
+;
+;                ("r" "reward tasks" (
+;                                     (tags-todo "reward/!STARTED"
+;                                                (
+;                                                 (org-agenda-overriding-header "rewards: STARTED")
+;                                                 ))
+;                                     (tags-todo "reward/!NEXT"
+;                                                (
+;                                                 (org-agenda-overriding-header "rewards: NEXT")
+;                                                 ))
+;                                     (tags-todo "reward/!TODO"
+;                                                (
+;                                                 (org-agenda-overriding-header "rewards: TODO")
+;                                                 ))
+;                                     (tags-todo "reward/!SOMEDAY"
+;                                                (
+;                                                 (org-agenda-overriding-header "rewards: SOMEDAY")
+;                                                 ))
+;                                     ))
+;                ("i" "issues" (
+;                                     (tags-todo "issue/!STARTED"
+;                                                (
+;                                                 (org-agenda-overriding-header "issues: STARTED")
+;                                                 ))
+;                                     (tags-todo "issue/!NEXT"
+;                                                (
+;                                                 (org-agenda-overriding-header "issues: NEXT")
+;                                                 ))
+;                                     (tags-todo "issue/!TODO"
+;                                                (
+;                                                 (org-agenda-overriding-header "issues: TODO")
+;                                                 ))
+;                                     (tags-todo "issue/!SOMEDAY"
+;                                                (
+;                                                 (org-agenda-overriding-header "issues: SOMEDAY")
+;                                                 ))
+;                                     ))
+;
+;                ("$" "Shopping" tags "+Shopping"
+;                 (
+;                  (org-agenda-overriding-header "Shopping")
+;                  (org-agenda-skip-function 'tag-without-done-or-canceled)
+;                  ))
+;
+;                )))
+#+END_SRC
+
+#+RESULTS:
+| a | Super Agenda         | agenda                                                                                                                                                                                                                                                                                                        |            | (org-super-agenda-mode)                                                                                           | ((org-super-agenda-groups my-super-agenda-groups)) | (org-agenda nil a) |
+| A | Agenda               | agenda                                                                                                                                                                                                                                                                                                        |            | (org-agenda nil a)                                                                                                |                                                    |                    |
+| n | no TODO events +180d | ((agenda no TODO events +180d ((org-agenda-span 180) (org-agenda-time-grid nil) (org-agenda-entry-types (quote (:timestamp :sexp))) (org-agenda-skip-function (quote (or (org-agenda-skip-entry-if (quote todo) (quote any)) (org-agenda-skip-entry-if (quote category) infonova) (my-skip-tag lp)))))))      | nil        | (~/org/agenda_180d_filtered.html)                                                                                 |                                                    |                    |
+| D | detail agenda        | ((agenda detail agenda ((org-agenda-span 31) (org-agenda-time-grid nil))))                                                                                                                                                                                                                                    | nil        | (~/org/agenda_details.html)                                                                                       |                                                    |                    |
+| r | reward tasks         | ((tags-todo reward/!STARTED ((org-agenda-overriding-header rewards: STARTED))) (tags-todo reward/!NEXT ((org-agenda-overriding-header rewards: NEXT))) (tags-todo reward/!TODO ((org-agenda-overriding-header rewards: TODO))) (tags-todo reward/!SOMEDAY ((org-agenda-overriding-header rewards: SOMEDAY)))) |            |                                                                                                                   |                                                    |                    |
+| i | issues               | ((tags-todo issue/!STARTED ((org-agenda-overriding-header issues: STARTED))) (tags-todo issue/!NEXT ((org-agenda-overriding-header issues: NEXT))) (tags-todo issue/!TODO ((org-agenda-overriding-header issues: TODO))) (tags-todo issue/!SOMEDAY ((org-agenda-overriding-header issues: SOMEDAY))))         |            |                                                                                                                   |                                                    |                    |
+| B | borrowed             | tags                                                                                                                                                                                                                                                                                                          | +borrowed  | ((org-agenda-overriding-header borrowed or lend) (org-agenda-skip-function (quote tag-without-done-or-canceled))) |                                                    |                    |
+| $ | Besorgungen          | tags                                                                                                                                                                                                                                                                                                          | +Besorgung | ((org-agenda-overriding-header Besorgungen) (org-agenda-skip-function (quote tag-without-done-or-canceled)))      |                                                    |                    |
+
+*** Agenda settings
+
+start Agenda in follow-mode:
+#+BEGIN_SRC emacs-lisp
+  ;(setq org-agenda-start-with-follow-mode t)
+#+END_SRC
+
+- t = do not initialize agenda Org files when generating (only) agenda
+- nil = initialize normal
+- performance issue when not "t": https://punchagan.muse-amuse.in/posts/how-i-learnt-to-use-emacs-profiler.html
+#+BEGIN_SRC emacs-lisp
+  ;;(setq org-agenda-inhibit-startup nil);; slower but visibility of buffers is correctly shown
+  (setq org-agenda-inhibit-startup t);; faster with no hidden headings (agenda performance)
+#+END_SRC
+
+Compact the block agenda view
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-compact-blocks t)
+#+END_SRC
+
+- Changed in v7.9.3
+- http://orgmode.org/worg/doc.html#org-use-tag-inheritance
+- performance issue when not nil: https://punchagan.muse-amuse.in/posts/how-i-learnt-to-use-emacs-profiler.html
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-use-tag-inheritance (quote (agenda)));; agenda performance
+#+END_SRC
+
+http://orgmode.org/org.html#Weekly_002fdaily-agenda
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-span 'week)
+#+END_SRC
+
+For tag searches ignore tasks with scheduled and deadline dates
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq org-agenda-tags-todo-honor-ignore-options t)
+#+END_SRC
+
+Always hilight the current agenda line
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-agenda-mode-hook '(lambda () (hl-line-mode 1)))
+#+END_SRC
+
+The following custom-set-faces create the highlights
+#+BEGIN_SRC emacs-lisp :tangle no
+ (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+  '(highlight ((t (:background "cyan"))))
+  '(hl-line ((t (:inherit highlight :background "darkseagreen2"))))
+  '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
+#+END_SRC
+
+Keep tasks with dates off the global todo lists:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-todo-ignore-with-date nil)
+#+END_SRC
+
+Allow deadlines which are due soon to appear on the global todo lists:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-todo-ignore-deadlines (quote far))
+#+END_SRC
+
+Keep tasks scheduled in the future off the global todo lists
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-todo-ignore-scheduled (quote future))
+#+END_SRC
+
+Remove completed deadline tasks from the agenda view
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-skip-deadline-if-done t)
+#+END_SRC
+
+Remove completed scheduled tasks from the agenda view
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-skip-scheduled-if-done t)
+#+END_SRC
+
+Remove completed items from search results
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq org-agenda-skip-timestamp-if-done t)
+#+END_SRC
+
+Include agenda archive files when searching for things
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-text-search-extra-files (quote (agenda-archives)))
+#+END_SRC
+
+show state changes in log-mode of agenda
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-log-mode-items (quote (state)))
+#+END_SRC
+
+http://orgmode.org/worg/org-faq.html
+#+BEGIN_SRC emacs-lisp
+;(setq org-agenda-skip-additional-timestamps-same-entry t)
+(setq org-agenda-skip-additional-timestamps-same-entry nil)
+#+END_SRC
+
+do not search for time in heading when displaying a date-stamp
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-search-headline-for-time nil)
+#+END_SRC
+
+open agenda in same buffer, full size
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-window-setup 'current-window)
+#+END_SRC
+
+add diary entries in agenda view
+http://orgmode.org/org.html#Weekly_002fdaily-agenda
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-include-diary t)
+#+END_SRC
+
+Show all future entries for repeating tasks
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-repeating-timestamp-show-all t)
+#+END_SRC
+
+Show all agenda dates - even if they are empty
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-show-all-dates t)
+#+END_SRC
+
+Sorting order for tasks on the agenda
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-sorting-strategy
+	(quote ((agenda habit-down time-up user-defined-up priority-down category-keep)
+		(todo priority-down category-keep)
+		(tags priority-down category-keep)
+		(search category-keep))))
+#+END_SRC
+
+Start the weekly agenda today
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-start-on-weekday nil)
+#+END_SRC
+
+Non-nil means skip timestamp line if same entry shows because of deadline.
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+#+END_SRC
+
+Agenda sorting functions
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-cmp-user-defined 'bh/agenda-sort)
+#+END_SRC
+
+Enable display of the time grid so we can see the marker for the current time
+#+BEGIN_SRC emacs-lisp :tangle no
+  ;; (setq org-agenda-time-grid
+  ;;       ((daily today remove-match)
+  ;;        #("----------------" 0 16
+  ;;          (org-heading t))
+  ;;        (800 1000 1200 1400 1600 1800 2000)))
+#+END_SRC
+
+Display tags farther right
+#+BEGIN_SRC emacs-lisp
+  ;;(setq org-agenda-tags-column -102)
+  (setq org-tags-column -101); for powerplantwin 23" TFT turned 90
+					; degrees; should *not* differ between
+					; systems! Otherwise Org-files gets
+					; re-formatted after switching
+                                        ; system
+  ;;(when (my-system-type-is-windows)
+  ;;    ;;(setq org-agenda-tags-column -103);; for 23" TFT turned 90 degrees
+  ;;      (setq org-agenda-tags-column -117);; for 24" TFT turned 90 degrees
+  ;;      )
+  ;;(when (my-system-is-sherri)
+  ;;    (setq org-agenda-tags-column -117);; -117 for 23" TFT sherri, rotated 90°
+  ;;    )
+  (setq org-agenda-tags-column (- (- (window-total-width) 3))) ;; total width minus 3
+#+END_SRC
+
+Sticky agendas remain opened in the background so that you don't
+need to regenerate them each time you hit the corresponding
+keystroke. This is a big time saver.
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq org-agenda-sticky t)
+#+END_SRC
+
+*** Agenda category icons
+
+There is the possibility of adding icons to categories:
+http://julien.danjou.info/blog/2010/icon-category-support-in-org-mode
+
+This is a neat way of beautifying the agenda.
+
+Unfortunately, the clean way of defining the data directory relatively
+to the path stored in =my-user-emacs-directory= does not work:
+: (concat my-user-emacs-directory "bin/R6-logo_18x12.jpg") nil nil :ascent center)
+
+I don't know how to fix this and so I stick with the hard coded path
+and with a bleeding heart.
+
+#+BEGIN_SRC emacs-lisp
+    (setq org-agenda-category-icon-alist nil)
+    ;(when (my-system-type-is-windows)
+      (add-to-list 'org-agenda-category-icon-alist
+                   '(".*" '(space . (:width (16))))
+                   )
+  ;;    (add-to-list 'org-agenda-category-icon-alist
+  ;;		  '("r6" "~/.emacs.d/bin/R6-logo_18x12.jpg" nil nil :ascent center)
+  ;;		  )
+  ;;    (add-to-list 'org-agenda-category-icon-alist
+  ;;		  '("infonova" "~/.emacs.d/bin/R6-logo_18x12.jpg" nil nil :ascent center)
+  ;;		  )
+      (add-to-list 'org-agenda-category-icon-alist
+                    '("detego" "~/.emacs.d/bin/detego-inwarehouse-logo-D_only_16x16.png" nil nil :ascent center)
+                    )
+      (add-to-list 'org-agenda-category-icon-alist
+                    '("outlook" "~/.emacs.d/bin/detego-inwarehouse-logo-D_only_16x16.png" nil nil :ascent center)
+                    )
+      ;;(add-to-list 'org-agenda-category-icon-alist
+      ;;		 '("misc" '(space . (:width (18))))
+      ;;		 )
+    ;  )
+
+    ;; (when (and (not (my-system-type-is-windows)) (not (my-system-is-karl-voit-at)))
+      (add-to-list 'org-agenda-category-icon-alist
+                   '(".*" '(space . (:width (16))))
+                   )
+      (add-to-list 'org-agenda-category-icon-alist
+                   '("contacts" "~/.emacs.d/bin/user-identity.png" nil nil :ascent center)
+                       ;; /usr/share/icons/gnome/16x16/emotes/face-smile.png
+                    )
+      (add-to-list 'org-agenda-category-icon-alist
+                   '("public_voit" "~/.emacs.d/bin/application-rss+xml.png" nil nil :ascent center)
+                   ;; /usr/share/icons/oxygen/16x16/mimetypes/application-rss+xml.png
+                    )
+  ;;    (add-to-list 'org-agenda-category-icon-alist
+  ;;		 '("misc" "~/.emacs.d/bin/emblem-new.png" nil nil :ascent center)
+  ;;                 ;; /usr/share/icons/oxygen/16x16/emblems/emblem-new.png
+  ;;		  )
+      (add-to-list 'org-agenda-category-icon-alist
+                   '("hardware" "~/.emacs.d/bin/camera-photo.png" nil nil :ascent center)
+                   ;; /usr/share/icons/oxygen/16x16/devices/camera-photo.png
+                    )
+      (add-to-list 'org-agenda-category-icon-alist
+                   '("bwg" "~/.emacs.d/bin/go-home.png" nil nil :ascent center)
+                   ;; /usr/share/icons/oxygen/16x16/actions/go-home.png
+                    )
+  ;;   )
+#+END_SRC
+
+*** my-org-agenda() → my-map a
+
+switch to open Agenda or open new one:
+#+BEGIN_SRC emacs-lisp
+  (defun my-org-agenda ()
+    "Opens the already opened agenda or opens new one instead"
+    (interactive)
+
+    (setq my-org-agenda-tags-column (- (- (window-total-width) 3)))
+    (setq org-agenda-tags-column my-org-agenda-tags-column) ;; total width minus 3
+
+    (if (my-buffer-exists "*Org Agenda*")
+        (switch-to-buffer "*Org Agenda*")
+      ;;;(my-super-agenda)
+      )
+    )
+  ;;(bind-key "a" 'my-org-agenda my-map)
+#+END_SRC
+
+*** my-memacs-org-agenda() → my-map m     C-cm
+
+Memacs org-agenda shortcut
+#+BEGIN_SRC emacs-lisp
+  (defun my-memacs-org-agenda ()
+    "Opens an org-agenda with activated archive"
+    (interactive)
+    ;;(setq org-agenda-files (append (quote ("~/org/issues.org"))));; for testing purposes
+    (org-agenda-list)
+    ;;(call-interactively 'org-agenda-log-mode)
+    (org-agenda-log-mode '(4))
+    (call-interactively 'org-agenda-archives-mode)
+    (org-agenda-archives-mode 'files)
+    )
+  ;;disabled because I needed "m";; (bind-key "m" 'my-memacs-org-agenda my-map)
+  (global-set-key "\C-cm" 'my-memacs-org-agenda)
+#+END_SRC
+
+My org-agenda files are set in the various customization files.
 
 **** Capturing
 
 #+begin_src emacs-lisp
-    (setq org-capture-templates '(("t" "Todo" entry (file+datetree ssmm-org-main-file)
-                                   "* TODO %?%t\nEntered on %u\n  %i\n")
+    (setq org-capture-templates '(("t" "Todo [inbox]" entry
+                                   (file+headline "~/org/pim/inbox.org" "Tasks")
+                                   "* TODO %i%?")
+                                  ("T" "Tickler" entry
+                                   (file+headline "~/org/pim/tickler.org" "Tickler")
+                                   "* %i%? \n %U")
                                   ("j" "Journal" entry (file+datetree ssmm-org-main-file)
                                    "* %?\nEntered on %T\n  %i\n" :clock-keep t)
                                   ("p" "New project entry" entry (file+olp ssmm-org-main-file "Projects")
                                    "* %?\nEntered on %T\n" :unnarrowed t)
                                   ))
 
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-cc" 'org-capture)
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cb" 'org-iswitchb)
+        (global-set-key "\C-cl" 'org-store-link)
+        (global-set-key "\C-cc" 'org-capture)
+        (global-set-key "\C-ca" 'org-agenda)
+        (global-set-key "\C-cb" 'org-iswitchb)
 
-  (defun ssmm-get-projects ()
-  "Get a list of current projects.
-   This will be a list of the 2nd-level headings under a 1st-level
-   heading named 'Projects', in `ssmm-org-main-file'.
-   "
-    (interactive)
-    (with-current-buffer (file-name-nondirectory ssmm-org-main-file)
-      (org-element-map (org-element-parse-buffer) 'headline
-        (lambda (headline)
-          (let* ((parent (org-element-property :parent headline))
-                 (foo1 (org-element-property :title parent)))
-                                          ;(and foo1 (message (format "Got %s" (substring-no-properties (car foo1)))))
-            (and (eq (org-element-type parent) 'headline)
-                 (string= (org-element-property :raw-value parent) "Projects")
-                 (= (org-element-property :level parent) 1)
-                 (org-element-property :raw-value headline)
-                 )))))
-    )
+  (setq org-refile-targets '(("~/org/pim/gtd.org" :maxlevel . 3)
+                             ("~/org/pim/someday.org" :level . 1)
+                             ("~/org/pim/tickler.org" :maxlevel . 2)))
+
+      (defun ssmm-get-projects ()
+      "Get a list of current projects.
+       This will be a list of the 2nd-level headings under a 1st-level
+       heading named 'Projects', in `ssmm-org-main-file'.
+       "
+        (interactive)
+        (with-current-buffer (file-name-nondirectory ssmm-org-main-file)
+          (org-element-map (org-element-parse-buffer) 'headline
+            (lambda (headline)
+              (let* ((parent (org-element-property :parent headline))
+                     (foo1 (org-element-property :title parent)))
+                                              ;(and foo1 (message (format "Got %s" (substring-no-properties (car foo1)))))
+                (and (eq (org-element-type parent) 'headline)
+                     (string= (org-element-property :raw-value parent) "Projects")
+                     (= (org-element-property :level parent) 1)
+                     (org-element-property :raw-value headline)
+                     )))))
+        )
 
 
 #+end_src
@@ -646,7 +1178,9 @@ code block.
 #+begin_src emacs-lisp
   (setq org-use-speed-commands t)
   (setq org-structure-template-alist
-     '(("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+     '(
+       ("S" "#+BEGIN_SRC sh ? :results output verbatim drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+       ("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
        ("e" "#+BEGIN_EXAMPLE\n?\n#+END_EXAMPLE" "<example>\n?\n</example>")
        ("q" "#+BEGIN_QUOTE\n?\n#+END_QUOTE" "<quote>\n?\n</quote>")
        ("v" "#+BEGIN_VERSE\n?\n#+END_VERSE" "<verse>\n?\n</verse>")
@@ -675,6 +1209,7 @@ contains an up to date list of the currently supported languages.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
+     (C . t)
      (plantuml . t)
      (python . t)
      (dot . t)
@@ -855,6 +1390,77 @@ correct the link handling of generated images.
     )
 
 #+end_src
+*** org2blog
+From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpress/]]
+#+begin_src emacs-lisp
+        (with-package* org2blog
+
+          ;; and you need this, else you’ll get symbol void errors when doing
+          ;; fill paragraph
+          (setq org-list-allow-alphabetical t)
+
+
+        (require 'org2blog-autoloads)
+        (require 'auth-source)
+
+        ;; http://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpress/
+        ;; but following the org2blog README and using auth-soure instead of netrc
+        ;; https://github.com/punchagan/org2blog/commit/52be89507c337e5f74be831ca563a8023e0ec736
+
+        (setq org-directory "~/org/")
+        ;; and you need this, else you'll get symbol void errors when doing
+        ;; fill paragraph
+        (setq org-list-allow-alphabetical t)
+
+        (require 'org2blog-autoloads)
+        (require 'auth-source)
+        (let (credentials)
+          (add-to-list 'auth-sources "~/.authinfo")
+          (setq credentials (auth-source-user-and-password "gdc"))
+          (setq org2blog/wp-blog-alist
+                `(("gdc"
+                   :url "https://www.grumpydogconsulting.com/xmlrpc.php"
+                   :username ,(car credentials)
+                   :password ,(cadr credentials)
+                   :default-title "Hello World"
+                   :default-categories ("org2blog" "emacs")
+                   :tags-as-categories nil))))
+
+  ;; http://blog.binchen.org/posts/how-to-use-org2blog-effectively-as-a-programmer.html
+  ;; has half the instructions, but was missing
+  ;; `wp-use-sourcecode-shortcode` at the time of this writing, without
+  ;; which this does not work at all.
+
+  ;; * `M-x package-install RET htmlize` is required, else you get empty
+  ;;   code blocks https://github.com/punchagan/org2blog/blob/master/org2blog.el
+  ;; * with wp-use-sourcecode-shortcode set to 't, org2blog will use 1
+  ;;   shortcodes, and hence the SyntaxHighlighter Evolved plugin on your blog.
+  ;;   however, if you set this to nil, native Emacs highlighting will be used,
+  ;;   implemented as HTML styling. Your pick!
+  (setq org2blog/wp-use-sourcecode-shortcode nil)
+  ;; removed light="true"
+  (setq org2blog/wp-sourcecode-default-params nil)
+  ;; target language needs to be in here
+  (setq org2blog/wp-sourcecode-langs
+        '("actionscript3" "bash" "coldfusion" "cpp" "csharp" "css" "delphi"
+          "erlang" "fsharp" "diff" "groovy" "javascript" "java" "javafx" "matlab"
+          "objc" "perl" "php" "text" "powershell" "python" "ruby" "scala" "sql"
+          "vb" "xml"
+          "sh" "emacs-lisp" "lisp" "lua"))
+
+  ;; this will use emacs syntax higlighting in your #+BEGIN_SRC
+  ;; <language> <your-code> #+END_SRC code blocks.
+  (setq org-src-fontify-natively t)
+
+      )
+#+end_src
+*** org-trello
+#+begin_src emacs-lisp
+    (with-package* org-trello
+      (custom-set-variables '(org-trello-files '("/home/bob/org/pim/trello.org"))) 
+    )
+
+#+end_src
 ** Ack-and-a-half
 #+begin_src emacs-lisp
     (with-package ack-and-a-half
@@ -1001,12 +1607,65 @@ correct the link handling of generated images.
 
 ** Python mode
 #+begin_src emacs-lisp
-  (with-package (python-mode sphinx-doc)
-    ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-    ;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-    )
+;;    (with-package (python-mode sphinx-doc blacken jedi)
+    (with-package (python-mode sphinx-doc blacken lsp-mode jedi)
+      ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+      ;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+      
+
+      (defun my-python-mode-hook ()
+        (setq indent-tabs-mode nil)
+        (setq py-indent-offset 4)
+        (setq whitespace-style '(face trailing lines space-before-tab indentation space-after-tab))
+        (whitespace-mode t)
+        )
+
+
+      (add-hook 'python-mode-hook 'my-python-mode-hook t)
+      (add-hook 'python-mode-hook 'blacken-mode t)
+  ;; make sure we have lsp-imenu everywhere we have LSP
+  (require 'lsp-imenu)
+  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)  
+  ;; get lsp-python-enable defined
+  ;; NB: use either projectile-project-root or ffip-get-project-root-directory
+  ;;     or any other function that can be used to find the root directory of a project
+  (lsp-define-stdio-client lsp-python "python"
+                           #'projectile-project-root
+                           '("pyls"))
+
+  ;; make sure this is activated when python-mode is activated
+  ;; lsp-python-enable is created by macro above 
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (lsp-python-enable)))
+)
+
+;  (add-hook 'python-mode-hook 'jedi:setup)
+;  (setq jedi:complete-on-dot t) ; optional
 #+end_src
 
+#+begin_src emacs-lisp
+  (with-package* pyvenv
+    (add-hook 'pyvenv-post-activate-hooks 'pyvenv-restart-python)
+  )
+#+end_src
+#+begin_src emacs-lisp
+;    (with-package elpy
+ ;   (elpy-enable)
+ ;      )
+#+end_src
+** Haskell
+#+begin_src emacs-lisp
+(with-package haskell-mode
+    (add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+)
+#+end_src
+** Yaml
+#+begin_src emacs-lisp
+  (with-package* yaml-mode
+    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  )
+#+end_src
 ** Projectile
 #+begin_src emacs-lisp
   (with-package* projectile
@@ -1033,45 +1692,46 @@ correct the link handling of generated images.
 
 ** Helm
 #+BEGIN_SRC emacs-lisp
-  (with-package* (helm helm-descbinds helm-projectile)
-    (require 'helm)
-    (require 'helm-config)
+    (with-package* (helm helm-descbinds helm-projectile)
+      (require 'helm)
+      (require 'helm-config)
 
-    (global-set-key (kbd "C-x b") 'helm-mini)
-    (global-set-key (kbd "C-x C-f") 'helm-find-files)
+      (global-set-key (kbd "C-x b") 'helm-mini)
+      (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
-    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-    (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+      (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-    (when (executable-find "curl")
-      (setq helm-google-suggest-use-curl-p t))
+      (when (executable-find "curl")
+        (setq helm-google-suggest-use-curl-p t))
 
-    (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-          helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-          helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-          helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-          helm-ff-file-name-history-use-recentf t
-          helm-buffers-fuzzy-matching t
-          helm-recentf-fuzzy-match    t
-          )
+      (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+            helm-ff-file-name-history-use-recentf t
+            helm-buffers-fuzzy-matching t
+            helm-recentf-fuzzy-match    t
+            )
 
-  ;; Go to my org project headings
-    (setq programs-helm-source
-          '((name . "Project topics")
-          (candidates . ssmm-get-projects)
-          (action . (lambda (candidate)
-                    (switch-to-buffer (file-name-nondirectory ssmm-org-main-file))
-                    (goto-char (point-min))
-                    (search-forward candidate)))))
+    ;; Go to my org project headings
+      (setq programs-helm-source
+            '((name . "Project topics")
+            (candidates . ssmm-get-projects)
+            (action . (lambda (candidate)
+                      (switch-to-buffer (file-name-nondirectory ssmm-org-main-file))
+                      (goto-char (point-min))
+                      (search-forward candidate)))))
 
 
-    (global-set-key (kbd "C-x c <f8>") (lambda () (interactive) (helm :sources '(programs-helm-source))))
+      (global-set-key (kbd "C-x c <f8>") (lambda () (interactive) (helm :sources '(programs-helm-source))))
 
-  (global-set-key (kbd "C-x c g") 'helm-google)
+      (global-set-key (kbd "C-x c g") 'helm-google)
 
-    (helm-mode 1)
-    )
+      (global-set-key (kbd "M-x") 'helm-M-x)
+      (helm-mode 1)
+      )
 #+END_SRC
 
 ** Expand-region
@@ -1092,6 +1752,12 @@ Try using this instead of macros.
     (global-set-key (kbd "C--") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-*") 'mc/mark-all-like-this))
 
+#+end_src
+** Yasnippet
+#+begin_src emacs-lisp
+  (with-package* yasnippet
+  (yas-global-mode 1)
+)
 #+end_src
 ** Magit, etc.
 #+begin_src emacs-lisp
@@ -1193,6 +1859,36 @@ Try using this instead of macros.
         (set-face-attribute 'keywiz-command-face nil
                             :foreground "white"))
 #+end_src
+** LSP
+#+begin_src emacs-lisp
+  ;; lsp extras
+  (with-package* lsp-ui
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+  (with-package* company-lsp
+    (push 'company-lsp company-backends))
+
+  ;; NB: only required if you prefer flake8 instead of the default
+  ;; send pyls config via lsp-after-initialize-hook -- harmless for
+  ;; other servers due to pyls key, but would prefer only sending this
+  ;; when pyls gets initialised (:initialize function in
+  ;; lsp-define-stdio-client is invoked too early (before server
+  ;; start)) -- cpbotha
+  (defun lsp-set-cfg ()
+    (let ((lsp-cfg `(:pyls (:configurationSources ("flake8")))))
+      ;; TODO: check lsp--cur-workspace here to decide per server / project
+      (lsp--set-configuration lsp-cfg)))
+
+  (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg)
+
+#+end_src
+** Flycheck
+#+begin_src emacs-lisp
+  (with-package flycheck*
+  )
+#+end_src
+
 ** Parens
 #+begin_src emacs-lisp
   (with-package smartparens-config*
@@ -1204,6 +1900,34 @@ Try using this instead of macros.
   (with-package* multi-term
     (push '("<home>" . other-frame) term-bind-key-alist)
   )
+#+end_src
+** IRC
+#+begin_src emacs-lisp
+  (with-eval-after-load 'rcirc
+    (defun-rcirc-command reconnect (arg)
+           "Reconnect the server process."
+           (interactive "i")
+           (unless process
+             (error "There's no process for this target"))
+           (let* ((server (car (process-contact process)))
+                  (port (process-contact process :service))
+                  (nick (rcirc-nick process))
+                  channels query-buffers)
+             (dolist (buf (buffer-list))
+               (with-current-buffer buf
+                 (when (eq process (rcirc-buffer-process))
+                   (remove-hook 'change-major-mode-hook
+                                'rcirc-change-major-mode-hook)
+                   (if (rcirc-channel-p rcirc-target)
+                       (setq channels (cons rcirc-target channels))
+                     (setq query-buffers (cons buf query-buffers))))))
+             (delete-process process)
+             (rcirc-connect server port nick
+                            rcirc-default-user-name
+                            rcirc-default-full-name
+                            channels))))
+
+
 #+end_src
 ** Workgroups2
 #+begin_src emacs-lisp

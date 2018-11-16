@@ -22,3 +22,9 @@ url/
 helm-adaptive-history
 custom.el
 .#*
+request/
+eshell/
+bookmarks
+abbrev_defs
+.trello/
+.python-environments/
