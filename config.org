@@ -35,9 +35,13 @@ The configuration will automatically pull down and update packages as needed.
 This is for values that should be set before anything else.
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 ;(setq debug-on-error t)
     (add-to-list 'load-path "~/.emacs.d/lisp")
     (set-frame-font "Inconsolata 12")
+=======
+    (add-to-list 'load-path "~/.emacs.d/lisp")
+>>>>>>> origin/master
     ;;; Turn off the annoying crap immediately
     (menu-bar-mode -1)
     (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -45,32 +49,29 @@ This is for values that should be set before anything else.
     (blink-cursor-mode -1)
     (electric-indent-mode -1)
     (setq backup-inhibited t
-          auto-save-default nil
-          inhibit-startup-message t
-          initial-scratch-message nil
-          wdired-allow-to-change-permissions t
-          dabbrev-case-distinction nil
-          dabbrev-case-fold-search nil
-          echo-keystrokes 0.1
-          delete-active-region nil
-          vc-follow-symlinks t
-          disabled-command-function nil
-          custom-file (make-temp-file "emacs-custom")
-          truncate-lines t)
+	  auto-save-default nil
+	  inhibit-startup-message t
+	  initial-scratch-message nil
+	  wdired-allow-to-change-permissions t
+	  dabbrev-case-distinction nil
+	  dabbrev-case-fold-search nil
+	  echo-keystrokes 0.1
+	  delete-active-region nil
+	  vc-follow-symlinks t
+	  disabled-command-function nil
+	  custom-file (make-temp-file "emacs-custom")
+	  truncate-lines t)
     (add-hook 'dired-mode-hook #'toggle-truncate-lines)
     (defalias 'yes-or-no-p 'y-or-n-p)
-  
    ;;; Packages
-  
    (require 'package)
    (require 'package-helper)
-  
   (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/") t)
+	       '("melpa" . "http://melpa.milkbox.net/packages/") t)
   (add-to-list 'package-archives
-               '("org" . "http://orgmode.org/elpa/") t)
+	       '("org" . "http://orgmode.org/elpa/") t)
   (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/") t)
+	       '("marmalade" . "http://marmalade-repo.org/packages/") t)
   (setq package-enable-at-startup nil)
   (setq package-blacklist '(batch-mode))
   (package-initialize)
@@ -113,17 +114,17 @@ This code should be executed before any customization files are loaded.
 
 
 *** Align your code in a pretty way.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-x \\") 'align-regexp)
 #+end_src
 
 *** Completion that uses many different methods to find options.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (global-set-key (kbd "M-/") 'hippie-expand)
 #+end_src
 
 *** Use regex searches by default.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "\C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
@@ -131,21 +132,21 @@ This code should be executed before any customization files are loaded.
 #+end_src
 
 *** File finding
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 ;   (global-set-key (kbd "C-c r") 'revert-buffer)
 ;   (global-set-key (kbd "C-x C-b") 'ibuffer)
-;   (global-set-key (kbd "C-x f") 'recentf-ido-find-file)  
+;   (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
 #+end_src
 
 *** Window switching. (C-x o goes to the next window)
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (windmove-default-keybindings) ;; Shift+direction
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1))) ;; back one
 (global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
 #+end_src
 
 *** Help should search more than just commands
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (global-set-key (kbd "C-h a") 'apropos)
 #+end_src
 
@@ -247,26 +248,26 @@ For working in xterm: XTERM=xterm-256color
 ** defuns
 *** recentf-ido-find-file
 #+srcname: starter-kit-recentf-ido-find-file
-#+begin_src emacs-lisp 
-;   (defun recentf-ido-find-file () 
-;     "Find a recent file using Ido." 
-;     (interactive) 
-;     (let* ((file-assoc-list 
-;             (mapcar (lambda (x) 
-;                       (cons (file-name-nondirectory x) 
-;                             x)) 
-;                     recentf-list)) 
-;            (filename-list 
-;             (remove-duplicates (mapcar #'car file-assoc-list) 
-;                                :test #'string=)) 
-;            (filename (ido-completing-read "Choose recent file: " 
-;                                           filename-list 
-;                                           nil 
-;                                           t))) 
-;       (when filename 
-;         (find-file (cdr (assoc filename 
-;                                file-assoc-list)))))) 
-#+end_src 
+#+begin_src emacs-lisp
+;   (defun recentf-ido-find-file ()
+;     "Find a recent file using Ido."
+;     (interactive)
+;     (let* ((file-assoc-list
+;             (mapcar (lambda (x)
+;                       (cons (file-name-nondirectory x)
+;                             x))
+;                     recentf-list))
+;            (filename-list
+;             (remove-duplicates (mapcar #'car file-assoc-list)
+;                                :test #'string=))
+;            (filename (ido-completing-read "Choose recent file: "
+;                                           filename-list
+;                                           nil
+;                                           t)))
+;       (when filename
+;         (find-file (cdr (assoc filename
+;                                file-assoc-list))))))
+#+end_src
 
 *** make-repeatable-command
 From emacs prelude-core.
@@ -288,12 +289,12 @@ will create a new command called foo-repeat.  Typing C-c a will
 just invoke foo.  Typing C-c a a a will invoke foo three times,
 and so on."
   (fset (intern (concat (symbol-name cmd) "-repeat"))
-        `(lambda ,(help-function-arglist cmd) ;; arg list
-           ,(format "A repeatable version of `%s'." (symbol-name cmd)) ;; doc string
-           ,(interactive-form cmd) ;; interactive form
-           ;; see also repeat-message-function
-           (setq last-repeatable-command ',cmd)
-           (repeat nil)))
+	`(lambda ,(help-function-arglist cmd) ;; arg list
+	   ,(format "A repeatable version of `%s'." (symbol-name cmd)) ;; doc string
+	   ,(interactive-form cmd) ;; interactive form
+	   ;; see also repeat-message-function
+	   (setq last-repeatable-command ',cmd)
+	   (repeat nil)))
   (intern (concat (symbol-name cmd) "-repeat")))
 
 #+end_src
@@ -308,7 +309,7 @@ Given a string in a buffer that looks like "filename:linenumber", go there.
     (beginning-of-thing 'filename)
     (and (looking-at "\\([-a-zA-Z._0-9/]+\\):\\([0-9]+\\)")
      (let ((filename (match-string 1))
-           (line_num (string-to-number (match-string 2))))
+	   (line_num (string-to-number (match-string 2))))
        (find-file-other-window filename)
        (goto-line line_num)
        )))
@@ -328,8 +329,8 @@ From emacswiki
     'interactive)
 
   (global-set-key [f6] (lambda ()
-                         (interactive)
-                         (copy-from-above-command 1)))
+			 (interactive)
+			 (copy-from-above-command 1)))
 #+end_src
 
 *** Default buffer
@@ -367,9 +368,27 @@ From emacswiki
   ;; (frame-configuration-to-register ?4)
   ;; (frame-configuration-to-register ?5)
   ;; )
-  
+
 #+end_src
 
+*** XML
+Defuns to work with XML files, as some operations in nXML mode cause
+Emacs to spin at 100% CPU.
+#+begin_src emacs-lisp
+  (defun ssmm-comment-xml-item ()
+    "Puts a comment around an XML tag, and fixes double-hyphens."
+    (interactive)
+    (search-backward "<")
+    (er/expand-region 1)
+    (replace-string "--" "- -" nil (region-beginning) (region-end))
+    (search-backward "<")
+    (er/expand-region 1)
+    (kill-region (region-beginning) (region-end))
+    (insert-string "<!-- ")
+    (yank)
+    (insert-string " -->")
+    )
+#+end_src
 *** CamelCase
 
 #+begin_src emacs-lisp
@@ -377,27 +396,27 @@ From emacswiki
   (defun mapcar-head (fn-head fn-rest list)
     "Like MAPCAR, but applies a different function to the first element."
     (if list
-        (cons (funcall fn-head (car list)) (mapcar fn-rest (cdr list)))))
+	(cons (funcall fn-head (car list)) (mapcar fn-rest (cdr list)))))
 
   (defun camelize (s)
     "Convert string S (with spaces or _) to CamelCase string."
     (mapconcat 'identity (mapcar
-                          '(lambda (word) (capitalize (downcase word)))
-                          (split-string s "[ _]+")) ""))
+			  '(lambda (word) (capitalize (downcase word)))
+			  (split-string s "[ _]+")) ""))
 
   (defun camelize-method (s)
     "Convert string S (with spaces or _) to camelCase string."
     (mapconcat 'identity (mapcar-head
-                          '(lambda (word) (downcase word))
-                          '(lambda (word) (capitalize (downcase word)))
-                          (split-string s "[ _]+")) ""))
+			  '(lambda (word) (downcase word))
+			  '(lambda (word) (capitalize (downcase word)))
+			  (split-string s "[ _]+")) ""))
 
   (defun camelCase (start end)
     "Coverts region to camelCase."
     (interactive "r")
     (let* ((str (buffer-substring-no-properties start end))
-           (ccstr (camelize-method str))
-           )
+	   (ccstr (camelize-method str))
+	   )
       (delete-region start end)
       (insert ccstr)
       )
@@ -407,8 +426,8 @@ From emacswiki
     "Coverts region to CamelCase."
     (interactive "r")
     (let* ((str (buffer-substring-no-properties start end))
-           (ccstr (camelize str))
-           )
+	   (ccstr (camelize str))
+	   )
       (delete-region start end)
       (insert ccstr)
       )
@@ -427,14 +446,59 @@ From emacswiki
     (interactive)
     (save-excursion
       (let ((bounds (bounds-of-thing-at-point 'word)))
-        (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ (car bounds)) (cdr bounds))
-        (downcase-region (car bounds) (cdr bounds))
-        )
+	(replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ (car bounds)) (cdr bounds))
+	(downcase-region (car bounds) (cdr bounds))
+	)
       )
     )
 #+end_src
 
+*** Center rectangle
+#+begin_src emacs-lisp
+;;; from http://stackoverflow.com/questions/11651604/how-to-center-text-in-emacs
+;;; 'select your interesting rectangle and run':
+(defun center-rectangle (beg end)
+  (interactive "*r")
+  (kill-rectangle beg end)
+  (with-temp-buffer
+    (yank-rectangle)
+    (setq fill-column (current-column))
+    (center-region (point-min) (point-max))
+    (goto-char (point-max))
+    (move-to-column fill-column t)
+    (kill-rectangle (point-min) (point-max)))
+  (goto-char beg)
+  (yank-rectangle))
+#+end_src
 
+*** C++ defuns
+Find the name of the next member function in a C++ source file.
+Used in yasnippet 'fblock'
+#+begin_src emacs-lisp
+  (defun ssmm-which-member-function ()
+    (interactive)
+    (save-excursion
+      (re-search-forward "::\\([^()]+\\)")
+      )
+    (match-string 1)
+    )
+#+end_src
+*** Python
+**** Mark a word to refactor to self.word
+You will probably want to be in the superword minor mode for this.
+#+begin_src emacs-lisp
+    (defun ssmm-refactor-to-member ()
+    "With point somewhere in a word, start a replace to self.word"
+    (interactive)
+  (let ((foo))
+    (subword-right)
+    (subword-left)
+    (subword-mark 1)
+    (setq foo (buffer-substring-no-properties (region-beginning) (region-end)))
+  (query-replace-regexp (concat "\\b" foo "\\b") (concat "self." foo))
+))
+
+#+end_src
 ** Registers
 Registers allow you to jump to a file or other location quickly. Use
 =C-x r j= followed by the letter of the register (i for =init.el=, r
@@ -445,16 +509,16 @@ You should add registers here for the files you edit most often.
 #+begin_src emacs-lisp :results silent
   (dolist
       (r `((?i (file . ,(concat config-dir "init.el")))
-           (?I (file . ,(let* ((user user-login-name)
-                               (org (expand-file-name (concat user ".org") config-dir))
-                               (el  (expand-file-name (concat user ".el") config-dir))
-                               (dir (expand-file-name user config-dir)))
-                          (cond
-                           ((file-exists-p org) org)
-                           ((file-exists-p el)  el)
-                           (t dir)))))
-           (?s (file . ,(concat config-dir "config.org")))
-           ))
+	   (?I (file . ,(let* ((user user-login-name)
+			       (org (expand-file-name (concat user ".org") config-dir))
+			       (el  (expand-file-name (concat user ".el") config-dir))
+			       (dir (expand-file-name user config-dir)))
+			  (cond
+			   ((file-exists-p org) org)
+			   ((file-exists-p el)  el)
+			   (t dir)))))
+	   (?s (file . ,(concat config-dir "config.org")))
+	   ))
     (set-register (car r) (cadr r)))
 #+end_src
 
@@ -466,27 +530,27 @@ You should add registers here for the files you edit most often.
 #+end_src
 
 *** Save a list of recent files visited.
-#+begin_src emacs-lisp 
-(recentf-mode 1)
+#+begin_src emacs-lisp
+(recentf-mode 0)
 #+end_src emacs-lisp
 
 *** Highlight matching parentheses when the point is on them.
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (show-paren-mode 1)
 #+end_src
 
 *** Other, spell checking, tabs, imenu and a coding hook
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
   (set-default 'indent-tabs-mode nil)
   (set-default 'indicate-empty-lines t)
   (set-default 'imenu-auto-rescan t)
-  
+
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
   (add-hook 'text-mode-hook 'turn-on-flyspell)
-  
+
   (defvar starter-kit-coding-hook nil
     "Hook that gets run on activation of any programming mode.")
-  
+
   (defalias 'yes-or-no-p 'y-or-n-p)
   ;; Seed the random-number generator
   (random t)
@@ -610,6 +674,25 @@ Common org tags.
    ;; A default name to give context to some of the elisp farther down.
    ;; It generally gets changed in a system or user file.
    (setq ssmm-org-main-file (expand-file-name "~/org/organizer.org"))
+
+  (defun ssmm-org-make-checkbox ()
+    "Make this line into a checkbox"
+    (interactive)
+    (beginning-of-line)
+    (insert " - [ ] "))
+
+  (defun ssmm-org-auto-fill ()
+    (if (string-match-p "^[0-9]+\.org" (buffer-name)) (auto-fill-mode 1))
+    )
+
+  (defun my-org-mode-hook ()
+    (local-set-key (kbd "C-c C-<f9>") 'ssmm-org-make-checkbox)
+    (local-set-key (kbd "C-<f9>") 'org-metaright)
+    (ssmm-org-auto-fill)
+    )
+
+  (add-hook 'org-mode-hook 'my-org-mode-hook t)
+  ;(setq prelude-org-mode-hook nil)
 
      (defun ssmm-org-make-checkbox ()
        "Make this line into a checkbox"
@@ -1097,6 +1180,7 @@ My org-agenda files are set in the various customization files.
 **** Capturing
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
     (setq org-capture-templates '(("t" "Todo [inbox]" entry
                                    (file+headline "~/org/pim/inbox.org" "Tasks")
                                    "* TODO %i%?")
@@ -1136,6 +1220,39 @@ My org-agenda files are set in the various customization files.
                      (org-element-property :raw-value headline)
                      )))))
         )
+=======
+    (setq org-capture-templates '(("t" "Todo" entry (file+datetree ssmm-org-main-file)
+				   "* TODO %?%t\nEntered on %u\n  %i\n")
+				  ("j" "Journal" entry (file+datetree ssmm-org-main-file)
+				   "* %?\nEntered on %T\n  %i\n" :clock-keep t)
+				  ("p" "New project entry" entry (file+olp ssmm-org-main-file "Projects")
+				   "* %?\nEntered on %T\n" :unnarrowed t)
+				  ))
+
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-cc" 'org-capture)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cb" 'org-iswitchb)
+
+  (defun ssmm-get-projects ()
+  "Get a list of current projects.
+   This will be a list of the 2nd-level headings under a 1st-level
+   heading named 'Projects', in `ssmm-org-main-file'.
+   "
+    (interactive)
+    (with-current-buffer (file-name-nondirectory ssmm-org-main-file)
+      (org-element-map (org-element-parse-buffer) 'headline
+	(lambda (headline)
+	  (let* ((parent (org-element-property :parent headline))
+		 (foo1 (org-element-property :title parent)))
+					  ;(and foo1 (message (format "Got %s" (substring-no-properties (car foo1)))))
+	    (and (eq (org-element-type parent) 'headline)
+		 (string= (org-element-property :raw-value parent) "Projects")
+		 (= (org-element-property :level parent) 1)
+		 (org-element-property :raw-value headline)
+		 )))))
+    )
+>>>>>>> origin/master
 
 
 #+end_src
@@ -1146,16 +1263,16 @@ My org-agenda files are set in the various customization files.
    :END:
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook
-            (lambda ()
-              (local-set-key "\M-\C-n" 'outline-next-visible-heading)
-              (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
-              (local-set-key "\M-\C-u" 'outline-up-heading)
-              ;; table
-              (local-set-key "\M-\C-w" 'org-table-copy-region)
-              (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
-              (local-set-key "\M-\C-l" 'org-table-sort-lines)
-              ;; display images
-              (local-set-key "\M-I" 'org-toggle-iimage-in-org)))
+	    (lambda ()
+	      (local-set-key "\M-\C-n" 'outline-next-visible-heading)
+	      (local-set-key "\M-\C-p" 'outline-previous-visible-heading)
+	      (local-set-key "\M-\C-u" 'outline-up-heading)
+	      ;; table
+	      (local-set-key "\M-\C-w" 'org-table-copy-region)
+	      (local-set-key "\M-\C-y" 'org-table-paste-rectangle)
+	      (local-set-key "\M-\C-l" 'org-table-sort-lines)
+	      ;; display images
+	      (local-set-key "\M-I" 'org-toggle-iimage-in-org)))
 #+end_src
 
 *** Speed keys
@@ -1178,9 +1295,14 @@ code block.
 #+begin_src emacs-lisp
   (setq org-use-speed-commands t)
   (setq org-structure-template-alist
+<<<<<<< HEAD
      '(
        ("S" "#+BEGIN_SRC sh ? :results output verbatim drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
        ("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+=======
+     '(("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+       ("S" "#+BEGIN_SRC sh ?:results raw verbatim replace drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+>>>>>>> origin/master
        ("e" "#+BEGIN_EXAMPLE\n?\n#+END_EXAMPLE" "<example>\n?\n</example>")
        ("q" "#+BEGIN_QUOTE\n?\n#+END_QUOTE" "<quote>\n?\n</quote>")
        ("v" "#+BEGIN_VERSE\n?\n#+END_VERSE" "<verse>\n?\n</verse>")
@@ -1268,12 +1390,12 @@ correct the link handling of generated images.
 
     (defun my-org-html-publish-to-html (plist filename pub-dir)
       (save-excursion
-        (find-file (org-html-publish-to-html plist filename pub-dir))
-        (while (re-search-forward "src=\"img" nil t)
-          (replace-match "src=\"/img"))
-        (basic-save-buffer)
-        (kill-buffer)
-        )
+	(find-file (org-html-publish-to-html plist filename pub-dir))
+	(while (re-search-forward "src=\"img" nil t)
+	  (replace-match "src=\"/img"))
+	(basic-save-buffer)
+	(kill-buffer)
+	)
       )
 
     (defun org-html--svg-image (source attributes info)
@@ -1284,11 +1406,11 @@ correct the link handling of generated images.
       The special attribute \"fallback\" can be used to specify a fallback
       image file to use if the object embedding is not supported."
       (let ((fallback (plist-get attributes :fallback))
-            (attrs (org-html--make-attribute-string
-                    (plist-put attributes :fallback nil))))
-        (format "<object type=\"image/svg+xml\" data=\"/%s\" %s>\n%s</object>"
-                source attrs (org-html-close-tag
-                              "img" (format "src=\"/%s\" %s" source attrs) info))))
+	    (attrs (org-html--make-attribute-string
+		    (plist-put attributes :fallback nil))))
+	(format "<object type=\"image/svg+xml\" data=\"/%s\" %s>\n%s</object>"
+		source attrs (org-html-close-tag
+			      "img" (format "src=\"/%s\" %s" source attrs) info))))
 
     (defun org-html--format-image (source attributes info)
       "Return \"img\" tag with given SOURCE and ATTRIBUTES.
@@ -1297,30 +1419,30 @@ correct the link handling of generated images.
     `org-export-read-attribute'.  INFO is a plist used as
     a communication channel."
       (if (string= "svg" (file-name-extension source))
-          (org-html--svg-image source attributes info)
-        (org-html-close-tag
-         "img"
-         (org-html--make-attribute-string
-          (org-combine-plists
-           (list :src (format "/%s" source)
-                 :alt (if (string-match-p "^ltxpng/" source)
-                          (org-html-encode-plain-text
-                           (org-find-text-property-in-string 'org-latex-src source))
-                        (file-name-nondirectory source)))
-           attributes))
-         info)))
+	  (org-html--svg-image source attributes info)
+	(org-html-close-tag
+	 "img"
+	 (org-html--make-attribute-string
+	  (org-combine-plists
+	   (list :src (format "/%s" source)
+		 :alt (if (string-match-p "^ltxpng/" source)
+			  (org-html-encode-plain-text
+			   (org-find-text-property-in-string 'org-latex-src source))
+			(file-name-nondirectory source)))
+	   attributes))
+	 info)))
 
     ;; These were set with 'custom-set-variables', but the custom file was
     ;; read before org2jekyll was loaded, and it barfed at
     ;; 'org2jekyll-input-directory' being undefined. RSF 2016-02-13
 
     (setq org2jekyll-blog-author "you"
-          org2jekyll-source-directory (expand-file-name "~/org/blog")
-          org2jekyll-jekyll-directory (expand-file-name "~/public_jekyll")
-          org2jekyll-jekyll-drafts-dir ""
-          org2jekyll-jekyll-posts-dir "_posts/"
+	  org2jekyll-source-directory (expand-file-name "~/org/blog")
+	  org2jekyll-jekyll-directory (expand-file-name "~/public_jekyll")
+	  org2jekyll-jekyll-drafts-dir ""
+	  org2jekyll-jekyll-posts-dir "_posts/"
 
-          )
+	  )
     (defun my-org2jekyll-mode ()
       (org-mode)
       (org2jekyll-mode)
@@ -1330,66 +1452,67 @@ correct the link handling of generated images.
 
     (defun ssmm-setup-org-publish-alist ()
       (setq org-publish-project-alist `(("default"
-                                         :base-directory ,(org2jekyll-input-directory)
-                                         :base-extension "org"
-                                         :publishing-directory ,(org2jekyll-output-directory "")
-                                         :publishing-function my-org-html-publish-to-html
-                                         :headline-levels 4
-                                         :section-numbers nil
-                                         :with-toc nil
-                                         :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
-                                         :html-preamble t
-                                         :recursive t
-                                         :make-index t
-                                         :html-extension "html"
-                                         :body-only t)
-                                        ("post"
-                                         :base-directory ,(org2jekyll-input-directory)
-                                         :base-extension "org"
-                                         :publishing-directory ,(org2jekyll-output-directory org2jekyll-jekyll-posts-dir)
-                                         :publishing-function my-org-html-publish-to-html
-                                          ;:publishing-function org-html-publish-to-html
-                                         :headline-levels 4
-                                         :section-numbers nil
-                                         :with-toc nil
-                                         :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
-                                         :html-preamble t
-                                         :recursive t
-                                         :make-index t
-                                         :html-extension "html"
-                                         :body-only t)
-                                        ("images"
-                                         :base-directory ,(org2jekyll-input-directory "img")
-                                         :base-extension "jpg\\|gif\\|png\\|svg"
-                                         :publishing-directory ,(org2jekyll-output-directory "img")
-                                         :publishing-function org-publish-attachment
-                                         :recursive t)
-                                        ("images-old"
-                                         :base-directory ,(org2jekyll-input-directory "/img")
-                                         :base-extension "jpg\\|gif\\|png\\|svg"
-                                         :publishing-directory ,(org2jekyll-output-directory "/img")
-                                         :publishing-function org-publish-attachment
-                                         :recursive t)
-                                        ("js"
-                                         :base-directory ,(org2jekyll-input-directory "js")
-                                         :base-extension "js"
-                                         :publishing-directory ,(org2jekyll-output-directory "js")
-                                         :publishing-function org-publish-attachment
-                                         :recursive t)
-                                        ("css"
-                                         :base-directory ,(org2jekyll-input-directory "css")
-                                         :base-extension "css\\|el"
-                                         :publishing-directory ,(org2jekyll-output-directory "css")
-                                         :publishing-function org-publish-attachment
-                                         :recursive t)
-                                        ("web" :components ("post" "images" "js" "css")))
-            ))
+					 :base-directory ,(org2jekyll-input-directory)
+					 :base-extension "org"
+					 :publishing-directory ,(org2jekyll-output-directory "")
+					 :publishing-function my-org-html-publish-to-html
+					 :headline-levels 4
+					 :section-numbers nil
+					 :with-toc nil
+					 :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+					 :html-preamble t
+					 :recursive t
+					 :make-index t
+					 :html-extension "html"
+					 :body-only t)
+					("post"
+					 :base-directory ,(org2jekyll-input-directory)
+					 :base-extension "org"
+					 :publishing-directory ,(org2jekyll-output-directory org2jekyll-jekyll-posts-dir)
+					 :publishing-function my-org-html-publish-to-html
+					  ;:publishing-function org-html-publish-to-html
+					 :headline-levels 4
+					 :section-numbers nil
+					 :with-toc nil
+					 :html-head "<link rel=\"stylesheet\" href=\"./css/style.css\" type=\"text/css\"/>"
+					 :html-preamble t
+					 :recursive t
+					 :make-index t
+					 :html-extension "html"
+					 :body-only t)
+					("images"
+					 :base-directory ,(org2jekyll-input-directory "img")
+					 :base-extension "jpg\\|gif\\|png\\|svg"
+					 :publishing-directory ,(org2jekyll-output-directory "img")
+					 :publishing-function org-publish-attachment
+					 :recursive t)
+					("images-old"
+					 :base-directory ,(org2jekyll-input-directory "/img")
+					 :base-extension "jpg\\|gif\\|png\\|svg"
+					 :publishing-directory ,(org2jekyll-output-directory "/img")
+					 :publishing-function org-publish-attachment
+					 :recursive t)
+					("js"
+					 :base-directory ,(org2jekyll-input-directory "js")
+					 :base-extension "js"
+					 :publishing-directory ,(org2jekyll-output-directory "js")
+					 :publishing-function org-publish-attachment
+					 :recursive t)
+					("css"
+					 :base-directory ,(org2jekyll-input-directory "css")
+					 :base-extension "css\\|el"
+					 :publishing-directory ,(org2jekyll-output-directory "css")
+					 :publishing-function org-publish-attachment
+					 :recursive t)
+					("web" :components ("post" "images" "js" "css")))
+	    ))
 
     (ssmm-setup-org-publish-alist)
 
     )
 
 #+end_src
+<<<<<<< HEAD
 *** org2blog
 From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpress/]]
 #+begin_src emacs-lisp
@@ -1460,118 +1583,144 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (custom-set-variables '(org-trello-files '("/home/bob/org/pim/trello.org"))) 
     )
 
+=======
+** Compilation mode
+#+begin_src emacs-lisp
+  (add-to-list 'compilation-error-regexp-alist-alist
+               '(flint
+               "<\\([^<>:]+\\):\\([0-9]+\\)>" 1 2))
+  (add-to-list 'compilation-error-regexp-alist
+               'flint)
+>>>>>>> origin/master
 #+end_src
 ** Ack-and-a-half
 #+begin_src emacs-lisp
     (with-package ack-and-a-half
-      (add-to-list 'load-path "/path/to/ack-and-a-half")
-       (require 'ack-and-a-half)
-       (defalias 'ack 'ack-and-a-half)
-       (defalias 'ack-same 'ack-and-a-half-same)
-       (defalias 'ack-find-file 'ack-and-a-half-find-file)
-       (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
+      ;(add-to-list 'load-path "/path/to/ack-and-a-half")
+      (require 'ack-and-a-half)
+      (defalias 'ack 'ack-and-a-half)
+      (defalias 'ack-same 'ack-and-a-half-same)
+      (defalias 'ack-find-file 'ack-and-a-half-find-file)
+      (defalias 'ack-find-file-same 'ack-and-a-half-find-file-same)
+      (add-to-list 'ack-and-a-half-root-directory-functions 'projectile-project-root)
   )
+#+end_src
+** wgrep
+#+begin_src emacs-lisp
+  (with-package* wgrep
+  (require 'grep)
+    (define-key grep-mode-map (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode)
+    (define-key grep-mode-map (kbd "C-c C-c") 'wgrep-finish-edit)
+    )
+#+end_src
+** iedit
+#+begin_src emacs-lisp
+  (with-package iedit
+    (global-set-key (kbd "S-C-M-i") 'iedit-mode)
+    )
 #+end_src
 ** C mode
 #+begin_src emacs-lisp
-  (with-package c-mode
+  (with-package cc-mode
     (c-add-style "std-style"
-                 '((c-basic-offset . 2)     ; Guessed value
-                   (c-offsets-alist
-                    (arglist-cont . 0)      ; Guessed value
-                    (arglist-intro . +)     ; Guessed value
-                    (block-close . 0)       ; Guessed value
-                    (brace-list-close . 0)  ; Guessed value
-                    (brace-list-entry . 0)  ; Guessed value
-                    (brace-list-intro . +)  ; Guessed value
-                    (brace-list-open . 0)   ; Guessed value
-                    (case-label . +)        ; Guessed value
-                    (class-close . 0)       ; Guessed value
-                    (class-open . 0)        ; Guessed value
-                    (defun-block-intro . +) ; Guessed value
-                    (defun-close . 0)       ; Guessed value
-                    (defun-open . 0)        ; Guessed value
-                    (else-clause . 0)       ; Guessed value
-                    (inclass . +)           ; Guessed value
-                    (statement . 0)             ; Guessed value
-                    (statement-block-intro . +) ; Guessed value
-                    (statement-case-intro . +) ; Guessed value
-                    (statement-cont . +)    ; Guessed value
-                    (substatement . +)      ; Guessed value
-                    (substatement-open . 0) ; Guessed value
-                    (topmost-intro . 0)     ; Guessed value
-                    (topmost-intro-cont . 0) ; Guessed value
-                    (access-label . -)
-                    (annotation-top-cont . 0)
-                    (annotation-var-cont . +)
-                    (arglist-close . c-lineup-close-paren)
-                    (arglist-cont-nonempty . c-lineup-arglist)
-                    (block-open . 0)
-                    (brace-entry-open . 0)
-                    (c . c-lineup-C-comments)
-                    (catch-clause . 0)
-                    (comment-intro . c-lineup-comment)
-                    (composition-close . 0)
-                    (composition-open . 0)
-                    (cpp-define-intro c-lineup-cpp-define +)
-                    (cpp-macro . -1000)
-                    (cpp-macro-cont . +)
-                    (do-while-closure . 0)
-                    (extern-lang-close . 0)
-                    (extern-lang-open . 0)
-                    (friend . 0)
-                    (func-decl-cont . +)
-                    (incomposition . +)
-                    (inexpr-class . +)
-                    (inexpr-statement . +)
-                    (inextern-lang . +)
-                    (inher-cont . c-lineup-multi-inher)
-                    (inher-intro . +)
-                    (inlambda . c-lineup-inexpr-block)
-                    (inline-close . 0)
-                    (inline-open . +)
-                    (inmodule . +)
-                    (innamespace . +)
-                    (knr-argdecl . 0)
-                    (knr-argdecl-intro . +)
-                    (label . 2)
-                    (lambda-intro-cont . +)
-                    (member-init-cont . c-lineup-multi-inher)
-                    (member-init-intro . +)
-                    (module-close . 0)
-                    (module-open . 0)
-                    (namespace-close . 0)
-                    (namespace-open . 0)
-                    (objc-method-args-cont . c-lineup-ObjC-method-args)
-                    (objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
-                    (objc-method-intro .
-                                       [0])
-                    (statement-case-open . 0)
-                    (stream-op . c-lineup-streamop)
-                    (string . -1000)
-                    (substatement-label . 2)
-                    (template-args-cont c-lineup-template-args +))))
-  
+		 '((c-basic-offset . 4)     ; Guessed value
+		   (c-offsets-alist
+		    (arglist-cont . 0)      ; Guessed value
+		    (arglist-intro . +)     ; Guessed value
+		    (block-close . 0)       ; Guessed value
+		    (brace-list-close . 0)  ; Guessed value
+		    (brace-list-entry . 0)  ; Guessed value
+		    (brace-list-intro . +)  ; Guessed value
+		    (brace-list-open . 0)   ; Guessed value
+		    (case-label . +)        ; Guessed value
+		    (class-close . 0)       ; Guessed value
+		    (class-open . 0)        ; Guessed value
+		    (defun-block-intro . +) ; Guessed value
+		    (defun-close . 0)       ; Guessed value
+		    (defun-open . 0)        ; Guessed value
+		    (else-clause . 0)       ; Guessed value
+		    (inclass . +)           ; Guessed value
+		    (statement . 0)             ; Guessed value
+		    (statement-block-intro . +) ; Guessed value
+		    (statement-case-intro . +) ; Guessed value
+		    (statement-cont . +)    ; Guessed value
+		    (substatement . +)      ; Guessed value
+		    (substatement-open . 0) ; Guessed value
+		    (topmost-intro . 0)     ; Guessed value
+		    (topmost-intro-cont . 0) ; Guessed value
+		    (access-label . -)
+		    (annotation-top-cont . 0)
+		    (annotation-var-cont . +)
+		    (arglist-close . c-lineup-close-paren)
+		    (arglist-cont-nonempty . c-lineup-arglist)
+		    (block-open . 0)
+		    (brace-entry-open . 0)
+		    (c . c-lineup-C-comments)
+		    (catch-clause . 0)
+		    (comment-intro . c-lineup-comment)
+		    (composition-close . 0)
+		    (composition-open . 0)
+		    (cpp-define-intro c-lineup-cpp-define +)
+		    (cpp-macro . -1000)
+		    (cpp-macro-cont . +)
+		    (do-while-closure . 0)
+		    (extern-lang-close . 0)
+		    (extern-lang-open . 0)
+		    (friend . 0)
+		    (func-decl-cont . +)
+		    (incomposition . +)
+		    (inexpr-class . +)
+		    (inexpr-statement . +)
+		    (inextern-lang . +)
+		    (inher-cont . c-lineup-multi-inher)
+		    (inher-intro . +)
+		    (inlambda . c-lineup-inexpr-block)
+		    (inline-close . 0)
+		    (inline-open . +)
+		    (inmodule . +)
+		    (innamespace . +)
+		    (knr-argdecl . 0)
+		    (knr-argdecl-intro . +)
+		    (label . +)
+		    (lambda-intro-cont . +)
+		    (member-init-cont . c-lineup-multi-inher)
+		    (member-init-intro . +)
+		    (module-close . 0)
+		    (module-open . 0)
+		    (namespace-close . 0)
+		    (namespace-open . 0)
+		    (objc-method-args-cont . c-lineup-ObjC-method-args)
+		    (objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
+		    (objc-method-intro .
+				       [0])
+		    (statement-case-open . 0)
+		    (stream-op . c-lineup-streamop)
+		    (string . -1000)
+		    (substatement-label . +)
+		    (template-args-cont c-lineup-template-args +))))
+
     (defun my-c-mode-hook ()
       (setq indent-tabs-mode nil)
       (c-set-style "std-style")
+      (electric-indent-mode t)
+      (setq whitespace-line-column 120)
       (setq whitespace-style '(face trailing lines space-before-tab indentation space-after-tab))
       (whitespace-mode t)
-                                          ;(add-hook 'before-save-hook 'whitespace-cleanup) This is still getting into the makefile before-save-hook????
+					  ;(add-hook 'before-save-hook 'whitespace-cleanup) This is still getting into the makefile before-save-hook????
       )
-  
-  
+
+
     (add-hook 'c-mode-common-hook 'my-c-mode-hook t)
     )
 #+end_src
-   
+
 ** Make modes
 #+begin_src emacs-lisp
   (with-package make-mode
     (defun my-makefile-mode-hook()
       (remove-hook 'before-save-hook 'whitespace-cleanup)
       )
-  
+
     (add-hook 'makefile-mode-hook 'my-makefile-mode-hook t)
     (add-hook 'makefile-gmake-mode-hook 'my-makefile-mode-hook t)
     (add-to-list 'auto-mode-alist '("\\.mak$" . makefile-gmake-mode))
@@ -1591,14 +1740,14 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (set-face-foreground 'cperl-array-face "olive drab")
       ;;RSF: Find ssmm-cleanup-buffer... (add-hook 'before-save-hook 'ssmm-cleanup-buffer)
       )
-  
+
     (add-hook 'cperl-mode-hook 'my-perl-mode-hooks t)
 
     (define-key cperl-mode-map (kbd "RET") 'reindent-then-newline-and-indent)
     (define-key cperl-mode-map (kbd "C-M-h") 'backward-kill-word)
-  
+
     (global-set-key (kbd "C-h P") 'perldoc)
-  
+
     (add-to-list 'auto-mode-alist '("\\.p[lm]$" . cperl-mode))
     (add-to-list 'auto-mode-alist '("\\.pod$" . pod-mode))
     (add-to-list 'auto-mode-alist '("\\.tt$" . tt-mode))
@@ -1607,6 +1756,7 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
 
 ** Python mode
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 ;;    (with-package (python-mode sphinx-doc blacken jedi)
     (with-package (python-mode sphinx-doc blacken lsp-mode jedi)
       ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
@@ -1665,11 +1815,41 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
   (with-package* yaml-mode
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   )
+=======
+  (with-package (python-mode sphinx-doc)
+    (add-hook 'python-mode-hook (lambda () (superword-mode)
+                                  (setq python-guess-indent nil
+                                        python-indent-offset 2)
+                                  ))
+  ;; Use this command (interactively) to reduce the indentation in 
+  ;; a python file from 4 to 2 (this replaces leading space on a line with
+  ;; half the number of spaces:
+  ;;   (query-replace-regexp "^ +" \,(make-string (/ (length \&) 2) ?\s))
+
+    ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+    ;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
+  )
+#+end_src
+
+** Snippets
+#+begin_src emacs-lisp
+  ;;(with-package* (yasnippet yasnippet-bundle)
+  (with-package* yasnippet
+    (yas-global-mode)
+    ;(add-to-list 'yas/root-directory "~/.emacs.d/snippets")
+    ;(add-to-list 'yas/root-directory "~/.emacs.d/elpa-snippets")
+    (setq yas-root-directory "~/.emacs.d/snippets")
+    (yas-load-directory yas-root-directory)
+    )
+
+>>>>>>> origin/master
 #+end_src
 ** Projectile
 #+begin_src emacs-lisp
   (with-package* projectile
     (projectile-global-mode)
+    (add-to-list 'projectile-project-root-files ".gitignore")
+    (add-to-list 'projectile-project-root-files "PBC.xml")
     )
 #+end_src
 
@@ -1692,12 +1872,52 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
 
 ** Helm
 #+BEGIN_SRC emacs-lisp
+<<<<<<< HEAD
     (with-package* (helm helm-descbinds helm-projectile)
       (require 'helm)
       (require 'helm-config)
 
       (global-set-key (kbd "C-x b") 'helm-mini)
       (global-set-key (kbd "C-x C-f") 'helm-find-files)
+=======
+  ;(with-package* (helm helm-descbinds)
+  (with-package* (helm helm-descbinds helm-projectile)
+    (require 'helm)
+    (require 'helm-config)
+
+    (global-set-key (kbd "C-x b") 'helm-mini)
+    (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+    (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+    (when (executable-find "curl")
+      (setq helm-google-suggest-use-curl-p t))
+
+    (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+          helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+          helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+          helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+          helm-ff-file-name-history-use-recentf nil ; Trying to increase speed of helm-mini
+          helm-buffers-fuzzy-matching nil
+          helm-recentf-fuzzy-match    nil
+          )
+
+    (setq projectile-completion-system 'helm)
+    (helm-projectile-on)
+    (setq projectile-switch-project-action 'helm-projectile-find-file)
+    (global-set-key (kbd "M-x") 'helm-M-x)
+
+  ;; Go to my org project headings
+    (setq programs-helm-source
+          '((name . "Project topics")
+          (candidates . ssmm-get-projects)
+          (action . (lambda (candidate)
+                    (switch-to-buffer (file-name-nondirectory ssmm-org-main-file))
+                    (goto-char (point-min))
+                    (search-forward candidate)))))
+>>>>>>> origin/master
 
       (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
       (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
@@ -1706,6 +1926,7 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (when (executable-find "curl")
         (setq helm-google-suggest-use-curl-p t))
 
+<<<<<<< HEAD
       (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
             helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
             helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
@@ -1714,6 +1935,9 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
             helm-buffers-fuzzy-matching t
             helm-recentf-fuzzy-match    t
             )
+=======
+  ;; (global-set-key (kbd "C-x c g") 'helm-google)
+>>>>>>> origin/master
 
     ;; Go to my org project headings
       (setq programs-helm-source
@@ -1772,7 +1996,7 @@ Try using this instead of macros.
   ;;(with-package* (key-chord ace-jump-mode)
   (with-package* (key-chord avy)
     (key-chord-mode 1)
-  
+
     ;(key-chord-define-global "hj" 'ace-jump-line-mode)
     ;(key-chord-define-global "jk" 'ace-jump-mode)
     (key-chord-define-global "hj" 'avy-goto-word-or-subword-1)
@@ -1797,7 +2021,7 @@ Try using this instead of macros.
 ;          ido-use-filename-at-point (quote guess)
 ;          ido-use-url-at-point t
 ;          ido-use-virtual-buffers t)
-;  
+;
 ;    (defun ssmm/ido-find-file ()
 ;      "Switch to another file.
 ;  The default directory is set to the buffer directory."
@@ -1806,7 +2030,7 @@ Try using this instead of macros.
 ;             (dir (and bname (file-name-directory bname))))
 ;        (ido-file-internal ido-default-file-method nil dir nil nil nil 'ignore))
 ;      )
-;  
+;
 ;    (defun ssmm/ido-find-file-other-window ()
 ;      "Switch to another file and show it in another window.
 ;  The default directory is set to the buffer directory."
@@ -1815,12 +2039,12 @@ Try using this instead of macros.
 ;             (dir (and bname (file-name-directory bname))))
 ;        (ido-file-internal 'other-window 'find-file-other-window dir nil nil nil 'ignore))
 ;      )
-;  
+;
 ;    (global-set-key (kbd "C-x C-f") 'ssmm/ido-find-file)
 ;    (global-set-key (kbd "C-x 4 f") 'ssmm/ido-find-file-other-window)
 ;    ;;(global-set-key (kbd "C-c C-z C-f") 'ido-find-file)
 ;    ;;(global-set-key (kbd "C-c C-z 4 f") 'ido-find-file-other-window)
-;  )  
+;  )
 #+end_src
 
 *** Ediff
@@ -1832,22 +2056,22 @@ Try using this instead of macros.
     ;;;_* ediff configuration
     ;; split windows horizontally:
     ;;(setq ediff-split-window-function 'split-window-horizontally)
-  
+
     ;; only hilight current diff:
     ;;(setq-default ediff-highlight-all-diffs 'nil)
-  
+
     ;; turn off whitespace checking:
     ;;(setq ediff-diff-options "-w")
-  
+
     ;; place the control window in the same frame as the ediff buffers
     ;; to switch from one to the other interactively, use the command
     ;; ediff-toggle-multiframe
     (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  
+
     ;; place the control window in a separate frame from the ediff buffers
     ;; Doesn't work in ratpoison!!!
     ;;(setq ediff-window-setup-function 'ediff-setup-windows-multiframe)
-  
+
     ;; highlight changes to characters rather than whole words
     (setq ediff-forward-word-function 'forward-char)
     )
@@ -1856,8 +2080,8 @@ Try using this instead of macros.
 ** Keywiz
 #+begin_src emacs-lisp
   (with-package keywiz
-        (set-face-attribute 'keywiz-command-face nil
-                            :foreground "white"))
+	(set-face-attribute 'keywiz-command-face nil
+			    :foreground "white"))
 #+end_src
 ** LSP
 #+begin_src emacs-lisp
@@ -1896,10 +2120,25 @@ Try using this instead of macros.
 #+end_src
 
 ** Multi-term
+Multi-term is a nice terminal package. One thing I like is that it
+creates a new buffer each time it's called. I change the bindings so I
+can move around and use the kill buffer inside of output.
+
 #+begin_src emacs-lisp
   (with-package* multi-term
     (push '("<home>" . other-frame) term-bind-key-alist)
-  )
+    (setq term-unbind-key-list
+	  (append '(
+		    "C-a"
+		    "C-b"
+		    "C-e"
+		    "C-f"
+		    "C-w"
+		    "M-b"
+		    "M-f"
+		    "M-w"
+		    ) term-unbind-key-list))
+    )
 #+end_src
 ** IRC
 #+begin_src emacs-lisp
@@ -1936,55 +2175,57 @@ Try using this instead of macros.
     (setq wg-remember-frame-for-each-wg t)
     (workgroups-mode 1)
   )
+
+(require 'workgroup-switcher)
+
 #+end_src
 
 ** Load user files
 #+begin_src emacs-lisp
-  (cl-flet ((sk-load (base)
-           (let* ((path          (expand-file-name base config-dir))
-                  (literate      (concat path ".org"))
-                  (encrypted-org (concat path ".org.gpg"))
-                  (plain         (concat path ".el"))
-                  (encrypted-el  (concat path ".el.gpg")))
-             (cond
-              ((file-exists-p encrypted-org) (org-babel-load-file encrypted-org))
-              ((file-exists-p encrypted-el)  (load encrypted-el))
-              ((file-exists-p literate)      (org-babel-load-file literate))
-              ((file-exists-p plain)         (load plain)))))
-         (remove-extension (name)
-           (string-match "\\(.*?\\)\.\\(org\\(\\.el\\)?\\|el\\)\\(\\.gpg\\)?$" name)
-           (match-string 1 name)))
-    (let ((elisp-dir (expand-file-name "src" config-dir))
-          (user-dir (expand-file-name user-login-name config-dir))
-          (user-local-dir (expand-file-name "~/.emacs-local"))
-          )
-      ;; add the src directory to the load path
-      (add-to-list 'load-path elisp-dir)
-      ;; load specific files
-      (when (file-exists-p elisp-dir)
-        (let ((default-directory elisp-dir))
-          (normal-top-level-add-subdirs-to-load-path)))
-      ;; load system-specific config
-      (sk-load (system-name))
-      (message (format "sk-loading from %s" (system-name)))
-      ;; load user-specific config
-      (sk-load user-login-name)
-      ;; load any files in the user's directory
-      (when (file-exists-p user-dir)
-        (add-to-list 'load-path user-dir)
-        (mapc #'sk-load
-              (remove-duplicates
-               (mapcar #'remove-extension
-                       (directory-files user-dir t ".*\.\\(org\\|el\\)\\(\\.gpg\\)?$"))
-               :test #'string=)))
-      (when (file-exists-p user-local-dir)
-        (add-to-list 'load-path user-local-dir)
-        (mapc #'sk-load
-              (remove-duplicates
-               (mapcar #'remove-extension
-                       (directory-files user-local-dir t ".*\.\\(org\\|el\\)\\(\\.gpg\\)?$"))
-               :test #'string=)))
-      ))
+      (cl-flet ((sk-load (base)
+	       (let* ((path          (expand-file-name base config-dir))
+		      (literate      (concat path ".org"))
+		      (encrypted-org (concat path ".org.gpg"))
+		      (plain         (concat path ".el"))
+		      (encrypted-el  (concat path ".el.gpg")))
+		 (cond
+		  ((file-exists-p encrypted-org) (org-babel-load-file encrypted-org))
+		  ((file-exists-p encrypted-el)  (load encrypted-el))
+		  ((file-exists-p literate)      (org-babel-load-file literate))
+		  ((file-exists-p plain)         (load plain)))))
+	     (remove-extension (name)
+	       (string-match "\\(.*?\\)\.\\(org\\(\\.el\\)?\\|el\\)\\(\\.gpg\\)?$" name)
+	       (match-string 1 name)))
+	(let ((elisp-dir (expand-file-name "src" config-dir))
+	      (user-dir (expand-file-name user-login-name config-dir))
+	      (user-local-dir (expand-file-name "~/.emacs-local"))
+	      )
+	  ;; add the src directory to the load path
+	  (add-to-list 'load-path elisp-dir)
+	  ;; load specific files
+	  (when (file-exists-p elisp-dir)
+	    (let ((default-directory elisp-dir))
+	      (normal-top-level-add-subdirs-to-load-path)))
+	  ;; load system-specific config
+	  (sk-load system-name)
+	  ;; load user-specific config
+	  (sk-load user-login-name)
+	  ;; load any files in the user's directory
+	  (when (file-exists-p user-dir)
+	    (add-to-list 'load-path user-dir)
+	    (mapc #'sk-load
+		  (remove-duplicates
+		   (mapcar #'remove-extension
+			   (directory-files user-dir t ".*\.\\(org\\|el\\)\\(\\.gpg\\)?$"))
+		   :test #'string=)))
+	  (when (file-exists-p user-local-dir)
+	    (add-to-list 'load-path user-local-dir)
+	    (mapc #'sk-load
+		  (remove-duplicates
+		   (mapcar #'remove-extension
+			   (directory-files user-local-dir t ".*\.\\(org\\|el\\)\\(\\.gpg\\)?$"))
+		   :test #'string=)))
+	  ))
 #+end_src
 
 
@@ -1992,7 +2233,7 @@ Try using this instead of macros.
 This is the last section to be run during startup.
 
 #+begin_src emacs-lisp
-  
+
   (server-start)
 
   (if (getenv "RATPOISON")
@@ -2001,7 +2242,7 @@ This is the last section to be run during startup.
        (define-key org-mode-map (kbd "C-c t") 'org-todo)
        ))
   ;;(sml/setup)
-  
+
 #+end_src
 
 
