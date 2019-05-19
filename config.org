@@ -35,13 +35,9 @@ The configuration will automatically pull down and update packages as needed.
 This is for values that should be set before anything else.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 ;(setq debug-on-error t)
     (add-to-list 'load-path "~/.emacs.d/lisp")
     (set-frame-font "Inconsolata 12")
-=======
-    (add-to-list 'load-path "~/.emacs.d/lisp")
->>>>>>> origin/master
     ;;; Turn off the annoying crap immediately
     (menu-bar-mode -1)
     (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -1180,7 +1176,6 @@ My org-agenda files are set in the various customization files.
 **** Capturing
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
     (setq org-capture-templates '(("t" "Todo [inbox]" entry
                                    (file+headline "~/org/pim/inbox.org" "Tasks")
                                    "* TODO %i%?")
@@ -1220,39 +1215,6 @@ My org-agenda files are set in the various customization files.
                      (org-element-property :raw-value headline)
                      )))))
         )
-=======
-    (setq org-capture-templates '(("t" "Todo" entry (file+datetree ssmm-org-main-file)
-				   "* TODO %?%t\nEntered on %u\n  %i\n")
-				  ("j" "Journal" entry (file+datetree ssmm-org-main-file)
-				   "* %?\nEntered on %T\n  %i\n" :clock-keep t)
-				  ("p" "New project entry" entry (file+olp ssmm-org-main-file "Projects")
-				   "* %?\nEntered on %T\n" :unnarrowed t)
-				  ))
-
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-cc" 'org-capture)
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cb" 'org-iswitchb)
-
-  (defun ssmm-get-projects ()
-  "Get a list of current projects.
-   This will be a list of the 2nd-level headings under a 1st-level
-   heading named 'Projects', in `ssmm-org-main-file'.
-   "
-    (interactive)
-    (with-current-buffer (file-name-nondirectory ssmm-org-main-file)
-      (org-element-map (org-element-parse-buffer) 'headline
-	(lambda (headline)
-	  (let* ((parent (org-element-property :parent headline))
-		 (foo1 (org-element-property :title parent)))
-					  ;(and foo1 (message (format "Got %s" (substring-no-properties (car foo1)))))
-	    (and (eq (org-element-type parent) 'headline)
-		 (string= (org-element-property :raw-value parent) "Projects")
-		 (= (org-element-property :level parent) 1)
-		 (org-element-property :raw-value headline)
-		 )))))
-    )
->>>>>>> origin/master
 
 
 #+end_src
@@ -1293,29 +1255,26 @@ To use, type (say) "<l<TAB>" on a blank line to get an empty elisp
 code block.
 
 #+begin_src emacs-lisp
-  (setq org-use-speed-commands t)
-  (setq org-structure-template-alist
-<<<<<<< HEAD
-     '(
-       ("S" "#+BEGIN_SRC sh ? :results output verbatim drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
-       ("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
-=======
-     '(("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
-       ("S" "#+BEGIN_SRC sh ?:results raw verbatim replace drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
->>>>>>> origin/master
-       ("e" "#+BEGIN_EXAMPLE\n?\n#+END_EXAMPLE" "<example>\n?\n</example>")
-       ("q" "#+BEGIN_QUOTE\n?\n#+END_QUOTE" "<quote>\n?\n</quote>")
-       ("v" "#+BEGIN_VERSE\n?\n#+END_VERSE" "<verse>\n?\n</verse>")
-       ("V" "#+BEGIN_VERBATIM\n?\n#+END_VERBATIM" "<verbatim>\n?\n</verbatim>")
-       ("c" "#+BEGIN_CENTER\n?\n#+END_CENTER" "<center>\n?\n</center>")
-       ("l" "#+begin_src emacs-lisp\n?\n#+end_src" "<src lang=\"emacs-lisp\">\n?\n</src>")
-       ("L" "#+LaTeX: " "<literal style=\"latex\">?</literal>")
-       ("h" "#+BEGIN_HTML\n?\n#+END_HTML" "<literal style=\"html\">\n?\n</literal>")
-       ("H" "#+HTML: " "<literal style=\"html\">?</literal>")
-       ("a" "#+BEGIN_ASCII\n?\n#+END_ASCII" "")
-       ("A" "#+ASCII: " "")
-       ("i" "#+INDEX: ?" "#+INDEX: ?")
-       ("I" "#+INCLUDE: %file ?" "<include file=%file markup=\"?\">")))
+  (with-package* org-tempo
+    (setq org-use-speed-commands t)
+    ;; (setq org-structure-template-alist
+    ;;       '(
+    ;;         ("S" "#+BEGIN_SRC sh ? :results output verbatim drawer\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+    ;;         ("s" "#+BEGIN_SRC ?\n\n#+END_SRC" "<src lang=\"?\">\n\n</src>")
+    ;;         ("e" "#+BEGIN_EXAMPLE\n?\n#+END_EXAMPLE" "<example>\n?\n</example>")
+    ;;         ("q" "#+BEGIN_QUOTE\n?\n#+END_QUOTE" "<quote>\n?\n</quote>")
+    ;;         ("v" "#+BEGIN_VERSE\n?\n#+END_VERSE" "<verse>\n?\n</verse>")
+    ;;         ("V" "#+BEGIN_VERBATIM\n?\n#+END_VERBATIM" "<verbatim>\n?\n</verbatim>")
+    ;;         ("c" "#+BEGIN_CENTER\n?\n#+END_CENTER" "<center>\n?\n</center>")
+    ;;         ("l" "#+begin_src emacs-lisp\n?\n#+end_src" "<src lang=\"emacs-lisp\">\n?\n</src>")
+    ;;         ("L" "#+LaTeX: " "<literal style=\"latex\">?</literal>")
+    ;;         ("h" "#+BEGIN_HTML\n?\n#+END_HTML" "<literal style=\"html\">\n?\n</literal>")
+    ;;         ("H" "#+HTML: " "<literal style=\"html\">?</literal>")
+    ;;         ("a" "#+BEGIN_ASCII\n?\n#+END_ASCII" "")
+    ;;         ("A" "#+ASCII: " "")
+    ;;         ("i" "#+INDEX: ?" "#+INDEX: ?")
+    ;;         ("I" "#+INCLUDE: %file ?" "<include file=%file markup=\"?\">")))
+  )
 #+end_src
 
 *** Code blocks
@@ -1512,7 +1471,7 @@ correct the link handling of generated images.
     )
 
 #+end_src
-<<<<<<< HEAD
+
 *** org2blog
 From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpress/]]
 #+begin_src emacs-lisp
@@ -1583,7 +1542,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (custom-set-variables '(org-trello-files '("/home/bob/org/pim/trello.org"))) 
     )
 
-=======
 ** Compilation mode
 #+begin_src emacs-lisp
   (add-to-list 'compilation-error-regexp-alist-alist
@@ -1591,7 +1549,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
                "<\\([^<>:]+\\):\\([0-9]+\\)>" 1 2))
   (add-to-list 'compilation-error-regexp-alist
                'flint)
->>>>>>> origin/master
 #+end_src
 ** Ack-and-a-half
 #+begin_src emacs-lisp
@@ -1756,9 +1713,9 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
 
 ** Python mode
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 ;;    (with-package (python-mode sphinx-doc blacken jedi)
-    (with-package (python-mode sphinx-doc blacken lsp-mode jedi)
+;;    (with-package (python-mode sphinx-doc blacken lsp-mode jedi)
+    (with-package (python-mode sphinx-doc)
       ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
       ;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
       
@@ -1774,20 +1731,20 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (add-hook 'python-mode-hook 'my-python-mode-hook t)
       (add-hook 'python-mode-hook 'blacken-mode t)
   ;; make sure we have lsp-imenu everywhere we have LSP
-  (require 'lsp-imenu)
-  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)  
+;  (require 'lsp-imenu)
+;  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)  
   ;; get lsp-python-enable defined
   ;; NB: use either projectile-project-root or ffip-get-project-root-directory
   ;;     or any other function that can be used to find the root directory of a project
-  (lsp-define-stdio-client lsp-python "python"
-                           #'projectile-project-root
-                           '("pyls"))
+;  (lsp-define-stdio-client lsp-python "python"
+;                           #'projectile-project-root
+;                           '("pyls"))
 
   ;; make sure this is activated when python-mode is activated
   ;; lsp-python-enable is created by macro above 
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (lsp-python-enable)))
+;  (add-hook 'python-mode-hook
+;            (lambda ()
+;              (lsp-python-enable)))
 )
 
 ;  (add-hook 'python-mode-hook 'jedi:setup)
@@ -1815,20 +1772,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
   (with-package* yaml-mode
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
   )
-=======
-  (with-package (python-mode sphinx-doc)
-    (add-hook 'python-mode-hook (lambda () (superword-mode)
-                                  (setq python-guess-indent nil
-                                        python-indent-offset 2)
-                                  ))
-  ;; Use this command (interactively) to reduce the indentation in 
-  ;; a python file from 4 to 2 (this replaces leading space on a line with
-  ;; half the number of spaces:
-  ;;   (query-replace-regexp "^ +" \,(make-string (/ (length \&) 2) ?\s))
-
-    ;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-    ;;(add-to-list 'interpreter-mode-alist '("python" . python-mode))
-  )
 #+end_src
 
 ** Snippets
@@ -1841,8 +1784,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
     (setq yas-root-directory "~/.emacs.d/snippets")
     (yas-load-directory yas-root-directory)
     )
-
->>>>>>> origin/master
 #+end_src
 ** Projectile
 #+begin_src emacs-lisp
@@ -1872,14 +1813,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
 
 ** Helm
 #+BEGIN_SRC emacs-lisp
-<<<<<<< HEAD
-    (with-package* (helm helm-descbinds helm-projectile)
-      (require 'helm)
-      (require 'helm-config)
-
-      (global-set-key (kbd "C-x b") 'helm-mini)
-      (global-set-key (kbd "C-x C-f") 'helm-find-files)
-=======
   ;(with-package* (helm helm-descbinds)
   (with-package* (helm helm-descbinds helm-projectile)
     (require 'helm)
@@ -1917,7 +1850,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
                     (switch-to-buffer (file-name-nondirectory ssmm-org-main-file))
                     (goto-char (point-min))
                     (search-forward candidate)))))
->>>>>>> origin/master
 
       (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
       (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
@@ -1926,7 +1858,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
       (when (executable-find "curl")
         (setq helm-google-suggest-use-curl-p t))
 
-<<<<<<< HEAD
       (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
             helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
             helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
@@ -1935,9 +1866,6 @@ From [[https://vxlabs.com/2014/05/25/emacs-24-with-prelude-org2blog-and-wordpres
             helm-buffers-fuzzy-matching t
             helm-recentf-fuzzy-match    t
             )
-=======
-  ;; (global-set-key (kbd "C-x c g") 'helm-google)
->>>>>>> origin/master
 
     ;; Go to my org project headings
       (setq programs-helm-source
@@ -2118,7 +2046,80 @@ Try using this instead of macros.
   (with-package smartparens-config*
   )
 #+end_src
+** Cedet etc.
+Mostly from https://tuhdo.github.io/c-ide.html
+#+begin_src emacs-lisp
+(with-package semantic
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+(global-semantic-stickyfunc-mode 1)
 
+(semantic-mode 1)
+
+(defun ssmm/cedet-hook ()
+  (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
+  (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
+
+(add-hook 'c-mode-common-hook 'ssmm/cedet-hook)
+(add-hook 'c-mode-hook 'ssmm/cedet-hook)
+(add-hook 'c++-mode-hook 'ssmm/cedet-hook)
+
+)
+#+end_src
+#+begin_src emacs-lisp
+;; this variables must be set before load helm-gtags
+;; you can change to any prefix key of your choice
+(setq helm-gtags-prefix-key "\C-cg")
+
+(with-package helm-gtags
+  :init
+  (progn
+    (setq helm-gtags-ignore-case t
+          helm-gtags-auto-update t
+          helm-gtags-use-input-at-cursor t
+          helm-gtags-pulse-at-cursor t
+          helm-gtags-prefix-key "\C-cg"
+          helm-gtags-suggested-key-mapping t)
+
+    ;; Enable helm-gtags-mode in Dired so you can jump to any tag
+    ;; when navigate project tree with Dired
+    (add-hook 'dired-mode-hook 'helm-gtags-mode)
+
+    ;; Enable helm-gtags-mode in Eshell for the same reason as above
+    (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+
+    ;; Enable helm-gtags-mode in languages that GNU Global supports
+    (add-hook 'c-mode-hook 'helm-gtags-mode)
+    (add-hook 'c++-mode-hook 'helm-gtags-mode)
+    (add-hook 'java-mode-hook 'helm-gtags-mode)
+    (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+    ;; key bindings
+    (with-eval-after-load 'helm-gtags
+      (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+      (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+      (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+      (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+      (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
+
+
+#+end_src
+#+begin_src emacs-lisp
+  ;; company-c-headers
+  (with-package* (company company-c-headers)
+    (add-to-list 'company-backends 'company-c-headers)
+    (global-company-mode 1)
+    (delete 'company-semantic company-backends)
+
+  ;; hs-minor-mode for folding source code
+  (add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+  (define-key c-mode-map  [(tab)] 'company-complete)
+  (define-key c++-mode-map  [(tab)] 'company-complete)
+  )
+
+#+end_src
 ** Multi-term
 Multi-term is a nice terminal package. One thing I like is that it
 creates a new buffer each time it's called. I change the bindings so I

@@ -1,60 +1,88 @@
-ack-and-a-half-1.2.0
-anaphora-20140728.1536
-async-20160711.2235
-auto-complete-20160827.649
-avy-20160814.250
-company-20160829.1206
-company-c-headers-20150801.901
-company-jedi-20151216.1921
-concurrent-20160109.2046
-ctable-20140304.1659
-dash-20160820.501
-dash-functional-20160615.1351
-deferred-20160109.2046
-epc-20140609.2234
-epl-20150517.433
-expand-region-20160729.131
-f-20160909.829
-flycheck-20160912.814
-flycheck-ghcmod-20150113.2232
-fringe-helper-20140620.1409
-git-commit-20160821.1338
-git-gutter-20160903.852
-git-gutter-fringe-20160520.1656
-haskell-mode-20160827.1033
-helm-20160911.2202
-helm-company-20160516.2258
-helm-core-20160908.25
-helm-descbinds-20160806.913
-helm-flycheck-20160710.129
-helm-projectile-20160902.2236
-jedi-20151214.705
-jedi-20160425.2156
-jedi-core-20160709.722
-key-chord-20160227.438
-keywiz-1.4
-kv-20140108.734
-let-alist-1.0.4
-magit-20160907.945
-magit-popup-20160821.1338
-multi-term-20160619.233
-multiple-cursors-20160719.216
-org-20160912
-org-bullets-20140918.1137
-org2jekyll-20160519.1004
-pkg-info-20150517.443
-popup-20160709.729
-projectile-20160830.138
-python-environment-20150310.153
-python-mode-20160911.1032
-rtags-20160904.1233
-s-20160711.525
-seq-2.16
-smartparens-20160828.1136
-sphinx-doc-20160116.317
-undo-tree-20140509.522
-with-editor-20160828.1025
-workgroups2-20141102.1122
-ws-butler-20150126.759
-yasnippet-20160801.1142
-zenburn-theme-20160724.2141
+  ac-cider           20161006.719  installed             Clojure auto-complete sources using CIDER
+  ace-jump-mode      20140616.815  installed             a quick cursor location minor mode for emacs
+  ace-window         20190514.830  installed             Quickly switch windows.
+  ack-and-a-half     20130815.1917 installed             Yet another front-end for ack [github]
+  alchemist          20180312.1304 installed             Elixir tooling integration into Emacs
+  ascope             20130824.1158 installed             Another cscope interface for emacs
+  auctex             12.1.2        installed             Integrated environment for *TeX*
+  bbdb               20190317.2053 installed             The Insidious Big Brother Database for GNU Emacs
+  bbdb-ext           20151220.2013 installed             Extra commands for BBDB
+  bbdb-vcard         20190410.2054 installed             vCard import/export for BBDB
+  blacken            20190301.1405 installed             Reformat python buffers using the "black" formatter
+  cider              20190515.946  installed             Clojure Interactive Development Environment that Rocks
+  company-c-headers  20180814.1730 installed             Company mode backend for C/C++ header files
+  company-lsp        20190505.615  installed             Company completion backend for lsp-mode.
+  dklrt              20131110.1341 installed             Ledger Recurring Transactions.
+  docean             20180605.1744 installed             Interact with DigitalOcean from Emacs.
+  elpy               20190508.1521 installed             Emacs Python Development Environment
+  expand-region      20190416.538  installed             Increase selected region by semantic units.
+  flycheck           20190503.853  installed             On-the-fly syntax checking
+  function-args      20171031.1704 installed             C++ completion for GNU Emacs
+  ggtags             20190320.2208 installed             emacs frontend to GNU Global source code tagging system
+  git-gutter-fringe  20170113.533  installed             Fringe version of git-gutter.el
+  haskell-mode       20190417.309  installed             A Haskell editing mode
+  helm               20190517.906  installed             Helm is an Emacs incremental and narrowing framework
+  helm-ag            20170209.1545 installed             the silver searcher with helm interface
+  helm-cscope        20190511.51   installed             Helm interface for xcscope.el.
+  helm-dash          20190515.856  installed             Offline documentation browser for +150 APIs using Dash docsets.
+  helm-descbinds     20190501.935  installed             A convenient `describe-bindings' with `helm'
+  helm-git-files     20141212.1317 installed             helm for git files
+  helm-git-grep      20170614.1411 installed             helm for git grep, an incremental git-grep(1)
+  helm-google        20180606.520  installed             Emacs Helm Interface for quick Google searches
+  helm-gtags         20170116.529  installed             GNU GLOBAL helm interface
+  helm-make          20190518.1946 installed             Select a Makefile target with helm
+  helm-projectile    20190408.1508 installed             Helm integration for Projectile
+  helm-pydoc         20160918.542  installed             pydoc with helm interface
+  htmlize            20180923.1829 installed             Convert buffer text and decorations to HTML.
+  ido-ubiquitous     20170923.842  installed             Use ido (nearly) everywhere.
+  ido-vertical-mode  20180618.2101 installed             Makes ido-mode display vertically.
+  iedit              20190419.803  installed             Edit multiple regions in the same way simultaneously.
+  jedi               20160426.456  installed             a Python auto-completion for Emacs
+  jedi-core          20181207.1    installed             Common code of jedi.el and company-jedi.el
+  js3-mode           20160515.1550 installed             An improved JavaScript editing mode
+  key-chord          20160227.1238 installed             map pairs of simultaneously pressed keys to commands
+  keywiz             1.4           installed             Emacs key sequence quiz
+  latex-math-preview 20190123.802  installed             preview LaTeX mathematical expressions.
+  latex-preview-pane 20181008.1822 installed             Makes LaTeX editing less painful by providing a updatable preview pane
+  ledger-mode        20190514.541  installed             Helper code for use with the "ledger" command-line tool
+  lsp-mode           20190518.1712 installed             LSP mode
+  lsp-python         20181108.754  installed             Python support for lsp-mode
+  lsp-ui             20190518.1842 installed             UI modules for lsp-mode
+  magit              20190517.1750 installed             A Git porcelain inside Emacs.
+  markdown-mode      20190305.319  installed             Major mode for Markdown-formatted text
+  math-symbol-lists  20190507.1707 installed             No description available.
+  metaweblog         20190212.238  installed             An emacs library to access metaweblog based weblogs
+  multi-term         20160619.933  installed             Managing multiple terminal buffers in Emacs.
+  multiple-cursors   20190317.1211 installed             Multiple cursors for Emacs.
+  org                20190513      installed             Outline-based notes management and organizer
+  org-bullets        20180208.2343 installed             Show bullets in org-mode as UTF-8 characters
+  org-edit-latex     20170908.1522 installed             Edit embedded LaTeX in a dedicated buffer
+  org-jekyll         20130508.239  installed             Export jekyll-ready posts form org-mode entries
+  org-super-agenda   20190315.621  installed             Supercharge your agenda
+  org-toc            20150401.654  installed             add table of contents to org-mode files
+  org-trello         20190304.900  installed             Minor mode to synchronize org-mode buffer and trello board
+  org2blog           20190309.442  installed             Blog from Org mode to wordpress
+  org2jekyll         20170225.915  installed             Minor mode to publish org-mode post to jekyll without specific yaml
+  ox-reveal          20180722.303  installed             reveal.js Presentation Back-End for Org Export Engine
+  parenface          20141125.828  installed             Provide a face for parens in lispy modes.
+  pinboard-api       20140324.1148 installed             Rudimentary http://pinboard.in integration
+  pinentry           0.1           installed             GnuPG Pinentry server implementation
+  projectile         20190509.902  installed             Manage and navigate projects in Emacs easily
+  python-mode        20190503.1638 installed             Python major mode
+  pyvenv             20181228.1722 installed             Python virtual environment interface
+  register-channel   20180926.2349 installed             Jump around fast using registers
+  smart-mode-line    20190515.1110 installed             A color coded smart mode-line.
+  smartparens        20190507.1213 installed             Automatic insertion, wrapping and paredit-like navigation with user defined pairs.
+  smartscan          20170211.2033 installed             Jumps between other symbols found at point
+  smex               20151212.2209 installed             M-x interface with Ido-style fuzzy matching.
+  sonic-pi           20171205.1205 installed             A Emacs client for SonicPi
+  sphinx-doc         20160116.1117 installed             Sphinx friendly docstrings for Python functions
+  undo-tree          20170706.246  installed             Treat undo history as a tree
+  w3m                20190510.48   installed             an Emacs interface to w3m
+  wgrep              20181229.40   installed             Writable grep buffer and apply the changes to files
+  workgroups2        20141102.1922 installed             New workspaces for Emacs
+  xml-rpc            20181002.1353 installed             An elisp implementation of clientside XML-RPC
+  yaml-mode          20180409.607  installed             Major mode for editing YAML files
+  yasnippet          20190502.2214 installed             Yet another snippet extension for Emacs.
+  zeal-at-point      20180131.2354 installed             Search the word at point with Zeal
+  zenburn-theme      20190510.934  installed             A low contrast color theme for Emacs.

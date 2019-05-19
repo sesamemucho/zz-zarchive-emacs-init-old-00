@@ -35,4 +35,10 @@ abbrev_defs
 .python-environments/
 .org-id-locations
 recentf
-
+session.*
+smex-items
+network-security.data
+tramp
+url
+transient
+org-clock-save.el
